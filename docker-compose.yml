@@ -1,0 +1,32 @@
+version: '3.6'
+
+services:
+  mariadb:
+    image: docker.io/bitnami/mariadb:10.6
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=root
+      - MARIADB_DATABASE=mindgeek
+  myapp:
+    image: docker.io/bitnami/laravel:9
+    ports:
+      - '10000:8000'
+    environment:
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_DATABASE=mindgeek
+    volumes:
+      - './:/app'
+    depends_on:
+      - mariadb
+  test_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '10001:80'
+    environment:
+      PMA_HOST: test_mariadb
+      PMA_PORT: 3306
+      PMA_USER: test
+    depends_on:
+      - mariadb
