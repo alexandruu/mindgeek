@@ -29,6 +29,8 @@ class Actor extends Controller
 
     public function store(Request $request, ActorsApi $actorApiService)
     {
+        $error = null;
+
         try {
             $actorApiService->import();
         } catch (ConnectionException $e) {

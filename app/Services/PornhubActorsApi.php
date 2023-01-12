@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class PornhubActorsApi extends ActorsApiAbstract
 {
-    public const ENDPOINT = 'https://www.pornhub.comm/files/json_feed_pornstars.json';
+    public const ENDPOINT = 'https://www.pornhub.com/files/json_feed_pornstars.json';
     public const NUMBER_OF_MODELS_TO_IMPORT = 10;
 
     public function import()
