@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Interfaces\Actors;
-use App\Interfaces\ActorsApi;
 use App\Models\Actor as ModelsActor;
-use Illuminate\Http\Client\ConnectionException;
+use App\Services\ActorsImport;
 use Illuminate\Http\Request;
 
 class Actor extends Controller
@@ -27,13 +26,13 @@ class Actor extends Controller
             ->with('actor', $actor);
     }
 
-    public function store(Request $request, ActorsApi $actorApiService)
+    public function store(Request $request, ActorsImport $actorsImport)
     {
         $error = null;
 
         try {
-            $actorApiService->import();
-        } catch (ConnectionException $e) {
+            $actorsImport->import('pornhub.actors');
+        } catch (\Exception $e) {
             $error = $e->getMessage();
         }
 

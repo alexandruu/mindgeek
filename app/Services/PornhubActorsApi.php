@@ -3,30 +3,90 @@
 namespace App\Services;
 
 use App\Models\Actor;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class PornhubActorsApi extends ActorsApiAbstract
 {
+    public const ID = 'pornhub.actors';
     public const ENDPOINT = 'https://www.pornhub.com/files/json_feed_pornstars.json';
-    public const NUMBER_OF_MODELS_TO_IMPORT = 10;
+    public const NUMBER_OF_MODELS_TO_IMPORT = 15;
+    public const HTTP_BATCH_SIZE_IN_BYTES = 1048576;
+
+    private $index = 0;
 
     public function import()
     {
-        $collectionOfActors = $this->getCollectionFromEndpoint();
-        foreach ($collectionOfActors as $index => $item) {
-            $this->saveActor($item);
+        $response = $this->getContentFromEndpoint();
+        $fileName = $this->saveResponseInFile($response);
 
-            if ($this->isLimitRechead($index + 1)) {
-                break;
+        return $this->saveActors($fileName);
+    }
+
+    public function canImport(string $string): bool
+    {
+        return $string === self::ID;
+    }
+
+    protected function getContentFromEndpoint()
+    {
+        return $this->client->request('GET', self::ENDPOINT, [
+            'stream' => true,
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+    }
+
+    protected function saveResponseInFile($response)
+    {
+        $body = $response->getBody();
+        $fileName = "json" . date('YmdHis') . ".json";
+
+        while (!$body->eof()) {
+            $line = $body->read(self::HTTP_BATCH_SIZE_IN_BYTES);
+            $file = fopen(Storage::disk()->path($fileName), "a+b");
+            fwrite($file, $line);
+            fclose($file);
+        }
+
+        return $fileName;
+    }
+
+    protected function saveActors($fileName): bool
+    {
+        $handle = fopen(Storage::disk()->path($fileName), 'r');
+        while (!feof($handle)) {
+            $line = fgets($handle);
+
+            if ($item = $this->getActor($line)) {
+                $this->saveActor($item);
+
+                if ($this->isLimitRechead()) {
+                    break;
+                }
             }
         }
 
-        return true;
+        return $this->index !== 0;
     }
 
-    protected function getCollectionFromEndpoint()
+    private function getActor($line): array|bool
     {
-        return Http::get(self::ENDPOINT)->collect('items');
+        $start = strpos($line, '{"attr');
+        if ($start) {
+            $end = strpos($line, "\n", $start) - 1;
+
+            if ($end > $start) {
+                $jsonEncoded = substr($line, $start, $end - $start);
+                $item = json_decode($jsonEncoded, true);
+
+                if (json_last_error() === JSON_ERROR_NONE && \is_array($item)) {
+                    return $item;
+                }
+            }
+        }
+
+        return false;
     }
 
     protected function saveActor($item)
@@ -58,8 +118,8 @@ class PornhubActorsApi extends ActorsApiAbstract
         return true;
     }
 
-    private function isLimitRechead($current): bool
+    private function isLimitRechead(): bool
     {
-        return $current == self::NUMBER_OF_MODELS_TO_IMPORT;
+        return ++$this->index == self::NUMBER_OF_MODELS_TO_IMPORT;
     }
 }
