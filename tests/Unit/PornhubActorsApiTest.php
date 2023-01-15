@@ -3,27 +3,34 @@
 namespace Tests\Unit;
 
 use App\Services\PornhubActorsApi;
-use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
+use GuzzleHttp\Client;
 
 class PornhubActorsApiTest extends TestCase
 {
-    public function testPopulateMethodMakesHttpRequest()
+    public function testImport()
     {
-        $body = [
-            'items' => [[
-                'name' => 'Test', 
-                'thumbnails' => [[
-                    'height' => '11'
-                ]]
-            ]]
-        ];
-        $pornhubResource = \Mockery::mock('App\Services\PornhubActorsApi[saveActor]')
-             ->shouldAllowMockingProtectedMethods();
-        Http::fake([PornhubActorsApi::ENDPOINT => Http::response($body, 200, ['server' => 'nginx'])]);
-        $pornhubResource->shouldReceive('saveActor')
+        $client = new Client();
+        $pornhubResource = \Mockery::mock('App\Services\PornhubActorsApi[getContentFromEndpoint,saveResponseInFile,saveActors]', [$client])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $pornhubResource->shouldReceive('getContentFromEndpoint')
+            ->once()
+            ->shouldReceive('saveResponseInFile')
+            ->once()
+            ->shouldReceive('saveActors')
             ->once();
         $pornhubResource->import();
-        Http::assertSentCount(1);
+    }
+
+    public function testCanImport()
+    {
+        $client = new Client();
+        $pornhubResource = \Mockery::mock('App\Services\PornhubActorsApi[getContentFromEndpoint,saveResponseInFile,saveActors]', [$client])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $this->assertTrue($pornhubResource->canImport(PornhubActorsApi::ID));
     }
 }
