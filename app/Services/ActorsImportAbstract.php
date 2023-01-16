@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Interfaces\ActorsApi;
+use App\Interfaces\ActorsImport;
 use GuzzleHttp\Client;
 
-abstract class ActorsApiAbstract implements ActorsApi
+abstract class ActorsImportAbstract implements ActorsImport
 {
     protected $client;
 
@@ -17,6 +17,6 @@ abstract class ActorsApiAbstract implements ActorsApi
     abstract protected function getContentFromEndpoint();
 
     abstract protected function saveActors($item);
-    
+
     abstract protected function saveActor($item);
 }

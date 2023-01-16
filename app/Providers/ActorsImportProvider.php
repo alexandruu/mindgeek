@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Services\ActorsImport;
-use App\Services\PornhubActorsApi;
+use App\Services\PornhubActorsImport;
 use Illuminate\Support\ServiceProvider;
 
 class ActorsImportProvider extends ServiceProvider
@@ -17,7 +17,7 @@ class ActorsImportProvider extends ServiceProvider
     {
         $this->app->singleton(ActorsImport::class, function ($app) {
             $service = new ActorsImport();
-            $service->registerStrategy($app->make(PornhubActorsApi::class));
+            $service->registerStrategy($app->make(PornhubActorsImport::class));
             return $service;
         });
     }

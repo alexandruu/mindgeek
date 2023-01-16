@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Actor;
 use Illuminate\Support\Facades\Storage;
 
-class PornhubActorsApi extends ActorsApiAbstract
+class PornhubActorsImport extends ActorsImportAbstract
 {
     public const ID = 'pornhub.actors';
     public const ENDPOINT = 'https://www.pornhub.com/files/json_feed_pornstars.json';
@@ -61,7 +61,7 @@ class PornhubActorsApi extends ActorsApiAbstract
             if ($item = $this->getActor($line)) {
                 $this->saveActor($item);
 
-                if ($this->isLimitRechead()) {
+                if ($this->isLimitReached()) {
                     break;
                 }
             }
@@ -118,7 +118,7 @@ class PornhubActorsApi extends ActorsApiAbstract
         return true;
     }
 
-    private function isLimitRechead(): bool
+    private function isLimitReached(): bool
     {
         return ++$this->index == self::NUMBER_OF_MODELS_TO_IMPORT;
     }

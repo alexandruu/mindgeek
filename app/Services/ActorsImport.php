@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\ActorsImportException;
 use App\Exceptions\NoStrategyFoundException;
-use App\Interfaces\ActorsApi;
+use App\Interfaces\ActorsImport as ActorsImportInterface;
 use Exception;
 
 class ActorsImport
@@ -38,7 +38,7 @@ class ActorsImport
         }
     }
 
-    public function registerStrategy(ActorsApi $strategy)
+    public function registerStrategy(ActorsImportInterface $strategy)
     {
         $this->strategies[] = $strategy;
     }
