@@ -29,7 +29,7 @@
                     <tr>
                         <td>{{ $actor->name }}</td>
                         <td>
-                            @if ($actor->thumbnails !== null && $actor->thumbnails[0]->urls[0]->url)
+                            @if (!empty($actor->thumbnails) && !empty($actor->thumbnails[0]->urls))
                                 <img src="{{ $actor->thumbnails[0]->urls[0]->url }}" alt="Poster">
                             @else
                                 No image for this actor.
