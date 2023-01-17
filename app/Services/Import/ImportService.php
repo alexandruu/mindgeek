@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Import;
 
-use App\Exceptions\ActorsImportException;
+use App\Exceptions\ImportException;
 use App\Exceptions\NoStrategyFoundException;
-use App\Interfaces\ActorsImport as ActorsImportInterface;
+use App\Interfaces\ImportInterface;
 use Exception;
 
-class ActorsImport
+class ImportService
 {
     private $strategies = [];
 
@@ -20,7 +20,7 @@ class ActorsImport
                 try {
                     $strategy->import();
                 } catch (Exception $e) {
-                    throw new ActorsImportException(sprintf(
+                    throw new ImportException(sprintf(
                         'Strategy "%s" for source "%s" encountered an error: %s',
                         get_class($strategy),
                         $source,
@@ -38,7 +38,7 @@ class ActorsImport
         }
     }
 
-    public function registerStrategy(ActorsImportInterface $strategy)
+    public function registerStrategy(ImportInterface $strategy)
     {
         $this->strategies[] = $strategy;
     }

@@ -4,7 +4,7 @@
 
         <div class="d-flex justify-content-end  bd-highlight">
             <div class="p-2 bd-highlight">
-                <form action="{{ route('actor.store') }}" method="post" style="display: inline">
+                <form action="{{ route('actors.store') }}" method="post" style="display: inline">
                     @csrf
                     <button type="submit" class="btn btn-outline-danger">Import actors from Pornhub</button>
                 </form>
@@ -44,7 +44,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item fs-6"
-                                            href="{{ route('actor.show', ['actor' => $actor->id]) }}">View details</a>
+                                            href="{{ route('actors.show', ['actor' => $actor->id]) }}">View details</a>
                                     </li>
                                 </ul>
                             </div>
@@ -57,6 +57,8 @@
                 @endforelse
             </tbody>
         </table>
+
+        {{ $actors->links() }}
 
     </div>
 

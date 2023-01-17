@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ActorsImportException extends Exception
+class HttpInteractionException extends Exception
 {
     //
 }

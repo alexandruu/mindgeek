@@ -9,6 +9,8 @@ class Actor extends Model
 {
     use HasFactory;
 
+    public const ID_COLUMN = 'id';
+
     protected $fillable = ['name', 'license', 'link'];
 
     public function thumbnails()

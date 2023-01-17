@@ -1,11 +1,7 @@
 <?php
 
-use App\Http\Controllers\Actor;
-use App\Services\PornhubImages;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\ActorsController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +14,6 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-Route::get('/', [Actor::class, 'index'])->name('actor.index');
-Route::get('/actor/{actor}', [Actor::class, 'show'])->name('actor.show');
-Route::post('/actor', [Actor::class, 'store'])->name('actor.store');
+Route::get('/', [ActorsController::class, 'index'])->name('actors.index');
+Route::get('/actors/{actor}', [ActorsController::class, 'show'])->name('actors.show');
+Route::post('/actors', [ActorsController::class, 'store'])->name('actors.store');

@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface ActorsImport
+interface ImportInterface
 {
     public function import();
 

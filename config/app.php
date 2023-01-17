@@ -194,7 +194,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\ActorsImportProvider::class,
+        App\Providers\ImportProvider::class,
+        App\Providers\HttpInteractionProvider::class,
 
     ],
 

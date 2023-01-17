@@ -4,7 +4,7 @@
 
         <div class="d-flex justify-content bd-highlight">
             <div class="p-2 bd-highlight">
-                <a href="{{ route('actor.index') }}" class="btn btn-outline-danger">Back</a>
+                <a href="{{ route('actors.index') }}" class="btn btn-outline-danger">Back</a>
             </div>
         </div>
 

@@ -2,17 +2,17 @@
 
 namespace App\Providers;
 
-use App\Interfaces\Actors;
-use App\Interfaces\ActorsApi;
+
+
+use App\Interfaces\ActorsInterface;
 use App\Services\PornhubActors;
-use App\Services\PornhubActorsApi;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
-        ActorsApi::class => PornhubActorsApi::class,
-        Actors::class => PornhubActors::class
+        ActorsInterface::class => PornhubActors::class
     ];
     /**
      * Register any application services.
@@ -31,6 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Paginator::useBootstrapFive();
     }
 }

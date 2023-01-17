@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface Actors
+interface ActorsInterface
 {
     public function getAll();
 
