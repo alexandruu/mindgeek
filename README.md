@@ -2,7 +2,7 @@
 
 In order to understand the solution you have to understand the problem I had to solve:
 
-You will need to write a program that downloads all the items in IMDB  and cache images within each asset. To make it efficient, it is desired to only call the URLs in the JSON file only once. Demonstrate, by using a framework of your choice, your software architectural skills. How you use the framework will be highly important in the evaluation. 
+You will need to write a program that downloads all the items in IMDB and cache images within each asset. To make it efficient, it is desired to only call the URLs in the JSON file only once. Demonstrate, by using a framework of your choice, your software architectural skills. How you use the framework will be highly important in the evaluation.
 
 How you display the feed and how many layers/pages you use is up to you, but please ensure that we can see the complete list and the details of every item. You will likely hit some road blocks and errors along the way, please use your own initiative to deal with these issues, it’s part of the test.
 
@@ -14,11 +14,10 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 I've tried as much as possible to use the best practices I currently know:
 
-- SOLID
-- Strategy Pattern for enforcing Open-Closed Principle
-- Cache and eager loading for less database usage;
-
+-   SOLID
+-   Strategy Pattern for enforcing Open-Closed Principle
+-   Cache and eager loading for less database usage;
 
 ## UML for Import and HTTP interaction
 
-<img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" alt="UML">
+<img src="https://github.com/alexandruu/mindgeek/blob/master/UML.png" alt="UML">
