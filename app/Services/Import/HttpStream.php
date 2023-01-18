@@ -15,7 +15,7 @@ class HttpStream extends HttpInteractionAbstract
         return $source->getHttpInteractionType() === HttpInteractionsEnum::STREAM->value;
     }
 
-    public function getResponse(HttpImportInterface $source)
+    public function process(HttpImportInterface $source)
     {
         $response = $this->makeRequest($source);
         $filePath = $this->saveResponseInFile($response);

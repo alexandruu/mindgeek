@@ -6,5 +6,5 @@ interface HttpInteractionInterface
 {
     public function canProcess(HttpImportInterface $httpImportInterface);
 
-    public function getResponse(HttpImportInterface $httpImportInterface);
+    public function process(HttpImportInterface $httpImportInterface);
 }

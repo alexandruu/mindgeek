@@ -4,27 +4,14 @@ namespace App\Services\Import;
 
 use App\Interfaces\HttpImportInterface;
 use App\Models\Actor;
+use App\Repositories\ActorsRepository;
+use Illuminate\Support\Facades\Cache;
 
 abstract class ImportActorsAbstract extends ImportAbstract implements HttpImportInterface
 {
-    protected $index = 0;
-
-    public function canImport(string $string): bool
+    protected function saveInformation($information)
     {
-        return $string === static::ID;
-    }
-
-    public function import()
-    {
-        foreach ($this->httpInteraction->import($this) as $actor) {
-            $this->saveActor($actor);
-
-            if ($this->isLimitReached()) {
-                break;
-            }
-        }
-
-        return $this->index !== 0;
+        $this->saveActor($information);
     }
 
     protected function saveActor($item)
@@ -56,8 +43,8 @@ abstract class ImportActorsAbstract extends ImportAbstract implements HttpImport
         return true;
     }
 
-    protected function isLimitReached(): bool
+    protected function clearCache()
     {
-        return ++$this->index == static::NUMBER_OF_MODELS_TO_IMPORT;
+        Cache::forget(ActorsRepository::keyForGetActorsPaginates());
     }
 }

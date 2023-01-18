@@ -11,27 +11,20 @@ use Exception;
 class HttpInteractionService
 {
     private $strategies = [];
-    private $appliedStrategies = 0;
 
     public function import(HttpImportInterface $source)
     {
         foreach ($this->strategies as $strategy) {
             if ($strategy->canProcess($source)) {
-                $this->markAppliedStrategy();
                 try {
-                    return $strategy->getResponse($source);
+                    return $strategy->process($source);
                 } catch (Exception $e) {
                     $this->throwHttpInteractionException($e, $strategy, $source);
                 }
             }
         }
 
-        $this->checkNumberOfStrategiesApplied($source);
-    }
-
-    private function markAppliedStrategy()
-    {
-        $this->appliedStrategies++;
+        $this->throwNoStrategyFoundException($source);
     }
 
     private function throwHttpInteractionException($e, $strategy, $source)
@@ -44,14 +37,12 @@ class HttpInteractionService
         ));
     }
 
-    private function checkNumberOfStrategiesApplied($source)
+    private function throwNoStrategyFoundException($source)
     {
-        if ($this->appliedStrategies === 0) {
-            throw new NoStrategyFoundException(sprintf(
-                'No strategy found for source "%s".',
-                $source->getHttpInteractionType()
-            ));
-        }
+        throw new NoStrategyFoundException(sprintf(
+            'No strategy found for source "%s".',
+            $source->getHttpInteractionType()
+        ));
     }
 
     public function registerStrategy(HttpInteractionInterface $strategy)

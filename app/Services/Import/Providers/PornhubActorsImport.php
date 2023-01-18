@@ -9,7 +9,7 @@ class PornhubActorsImport extends ImportActorsAbstract
 {
     public const ID = 'pornhub.actors';
     public const ENDPOINT = 'https://www.pornhub.com/files/json_feed_pornstars.json';
-    public const NUMBER_OF_MODELS_TO_IMPORT = 1000;
+    public const NUMBER_OF_MODELS_TO_IMPORT = 100;
     public const HTTP_ITERACTION_TYPE = HttpInteractionsEnum::STREAM;
 
     public function getEndpoint()
