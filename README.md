@@ -25,3 +25,7 @@ Also the ENDPOINT from this project is treated as one of many possible providers
 ## UML for Import and HTTP interaction
 
 <img src="https://github.com/alexandruu/mindgeek/blob/master/UML.png" alt="UML">
+
+## Tests
+
+Yes, I've wrote some tests.

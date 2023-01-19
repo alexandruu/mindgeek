@@ -2,7 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Services\PornhubActorsImport;
+use App\Services\Import\HttpInteractionService;
+use App\Services\Import\Providers\PornhubActorsImport;
 use Tests\TestCase;
 use GuzzleHttp\Client;
 
@@ -11,23 +12,24 @@ class PornhubActorsApiTest extends TestCase
     public function testImport()
     {
         $client = new Client();
-        $pornhubResource = \Mockery::mock('App\Services\PornhubActorsImport[getContentFromEndpoint,saveResponseInFile,saveActors]', [$client])
+        $httpInteractionService = \Mockery::mock(HttpInteractionService::class);
+        $service = \Mockery::mock('App\Services\Import\Providers\PornhubActorsImport[saveInformation]', [$client, $httpInteractionService])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
-        $pornhubResource->shouldReceive('getContentFromEndpoint')
+        $httpInteractionService->shouldReceive('import')
             ->once()
-            ->shouldReceive('saveResponseInFile')
-            ->once()
-            ->shouldReceive('saveActors')
+            ->andReturn(['text']);
+
+        $service->shouldReceive('saveInformation')
             ->once();
-        $pornhubResource->import();
+        $service->import();
     }
 
     public function testCanImport()
     {
         $client = new Client();
-        $pornhubResource = \Mockery::mock('App\Services\PornhubActorsImport[getContentFromEndpoint,saveResponseInFile,saveActors]', [$client])
+        $pornhubResource = \Mockery::mock('App\Services\Import\Providers\PornhubActorsImport[]', [$client])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
