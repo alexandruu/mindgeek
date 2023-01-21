@@ -3,14 +3,15 @@
 namespace App\Services\Import\Providers;
 
 use App\Enums\HttpInteractionsEnum;
+use App\Interfaces\HttpStreamImportInterface;
 use App\Services\Import\ImportActorsAbstract;
 
-class PornhubActorsImport extends ImportActorsAbstract
+class PornhubActorsImport extends ImportActorsAbstract implements HttpStreamImportInterface
 {
     public const ID = 'pornhub.actors';
     public const ENDPOINT = 'https://www.pornhub.com/files/json_feed_pornstars.json';
     public const NUMBER_OF_MODELS_TO_IMPORT = 100;
-    public const HTTP_ITERACTION_TYPE = HttpInteractionsEnum::STREAM;
+    public const HTTP_INTERACTION_TYPE = HttpInteractionsEnum::STREAM;
 
     public function getEndpoint()
     {
@@ -19,7 +20,7 @@ class PornhubActorsImport extends ImportActorsAbstract
 
     public function getHttpInteractionType()
     {
-        return self::HTTP_ITERACTION_TYPE->value;
+        return self::HTTP_INTERACTION_TYPE;
     }
 
     public function getCallbackForExtractModel(): callable

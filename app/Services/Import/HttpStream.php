@@ -12,7 +12,7 @@ class HttpStream extends HttpInteractionAbstract
 
     public function canProcess(HttpImportInterface $source): bool
     {
-        return $source->getHttpInteractionType() === HttpInteractionsEnum::STREAM->value;
+        return $source->getHttpInteractionType() === HttpInteractionsEnum::STREAM;
     }
 
     public function process(HttpImportInterface $source)

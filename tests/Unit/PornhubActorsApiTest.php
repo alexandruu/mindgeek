@@ -11,28 +11,90 @@ class PornhubActorsApiTest extends TestCase
 {
     public function testImport()
     {
-        $client = new Client();
         $httpInteractionService = \Mockery::mock(HttpInteractionService::class);
-        $service = \Mockery::mock('App\Services\Import\Providers\PornhubActorsImport[saveInformation]', [$client, $httpInteractionService])
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
+        $service = $this->getMockOfTestedServiceWithHttpInteractionService(
+            $httpInteractionService,
+            ['saveInformation','isLimitReached','clearCache']
+        );        
 
         $httpInteractionService->shouldReceive('import')
             ->once()
             ->andReturn(['text']);
-
         $service->shouldReceive('saveInformation')
+            ->once()
+            ->shouldReceive('isLimitReached')
+            ->once()
+            ->shouldReceive('clearCache')
             ->once();
+
         $service->import();
     }
 
     public function testCanImport()
     {
+        $service = $this->getMockOfTestedServiceOnlyWithMethodsToMock();
+
+        $this->assertTrue($service->canImport(PornhubActorsImport::ID));
+    }
+
+    public function testGetEndpoint()
+    {
+        $service = $this->getMockOfTestedServiceOnlyWithMethodsToMock(['getEndpoint']);
+
+        $this->assertEquals(PornhubActorsImport::ENDPOINT, $service->getEndpoint());
+    }
+
+    public function testGetHttpInteractionType()
+    {
+        $service = $this->getMockOfTestedServiceOnlyWithMethodsToMock(['getHttpInteractionType']);
+
+        $this->assertEquals(PornhubActorsImport::HTTP_INTERACTION_TYPE, $service->getHttpInteractionType());
+    }
+
+    public function testGetCallbackForExtractModel()
+    {
+        $service = $this->getMockOfTestedServiceOnlyWithMethodsToMock(['getCallbackForExtractModel']);
+
+        $this->assertIsCallable($service->getCallbackForExtractModel());
+    }
+
+    private function getMockOfTestedServiceOnlyWithMethodsToMock($methodsToMock = [])
+    {
         $client = new Client();
-        $pornhubResource = \Mockery::mock('App\Services\Import\Providers\PornhubActorsImport[]', [$client])
+        $httpInteractionService = \Mockery::mock(HttpInteractionService::class);
+
+        return $this->getMockOfTestedService(
+            $client, 
+            $httpInteractionService,
+            $methodsToMock
+        );
+    }
+
+    private function getMockOfTestedServiceWithHttpInteractionService(
+        $httpInteractionService,
+        $methodsToMock = []
+    ) {
+        $client = new Client();
+
+        return $this->getMockOfTestedService(
+            $client, 
+            $httpInteractionService,
+            $methodsToMock
+        );
+    }
+
+    private function getMockOfTestedService(
+        $client,
+        $httpInteractionService,
+        array $methodsToMock = []
+    ) {
+        $className = sprintf(
+            'App\Services\Import\Providers\PornhubActorsImport[%s]',
+            implode(',', $methodsToMock)
+        );
+
+        return \Mockery::mock($className, [$client, $httpInteractionService])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-
-        $this->assertTrue($pornhubResource->canImport(PornhubActorsImport::ID));
     }
 }

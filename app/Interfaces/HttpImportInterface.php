@@ -2,11 +2,9 @@
 
 namespace App\Interfaces;
 
-interface HttpImportInterface
+interface HttpImportInterface extends ImportInterface
 {
     public function getEndpoint();
 
     public function getHttpInteractionType();
-
-    public function getCallbackForExtractModel(): callable;
 }

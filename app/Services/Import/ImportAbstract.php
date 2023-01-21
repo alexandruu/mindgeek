@@ -2,10 +2,11 @@
 
 namespace App\Services\Import;
 
-use App\Interfaces\ImportInterface;
+use App\Enums\HttpInteractionsEnum;
+use App\Interfaces\HttpStreamImportInterface;
 use GuzzleHttp\Client;
 
-abstract class ImportAbstract implements ImportInterface
+abstract class ImportAbstract
 {
     protected Client $client;
     protected HttpInteractionService $httpInteraction;
@@ -23,7 +24,7 @@ abstract class ImportAbstract implements ImportInterface
 
     public function canImport(string $string): bool
     {
-        return $string === static::ID;
+        return $string === static::ID && $this->isImplementedTheCorrectInterfaceForHttpInteractionType();
     }
 
     public function import()
@@ -44,5 +45,11 @@ abstract class ImportAbstract implements ImportInterface
     protected function isLimitReached(): bool
     {
         return ++$this->index == static::NUMBER_OF_MODELS_TO_IMPORT;
+    }
+
+    private function isImplementedTheCorrectInterfaceForHttpInteractionType()
+    {
+        return static::HTTP_INTERACTION_TYPE !== HttpInteractionsEnum::STREAM ||
+            (static::HTTP_INTERACTION_TYPE === HttpInteractionsEnum::STREAM && $this instanceof HttpStreamImportInterface);
     }
 }

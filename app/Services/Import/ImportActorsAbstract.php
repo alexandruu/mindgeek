@@ -2,12 +2,11 @@
 
 namespace App\Services\Import;
 
-use App\Interfaces\HttpImportInterface;
 use App\Models\Actor;
 use App\Repositories\ActorsRepository;
 use Illuminate\Support\Facades\Cache;
 
-abstract class ImportActorsAbstract extends ImportAbstract implements HttpImportInterface
+abstract class ImportActorsAbstract extends ImportAbstract
 {
     protected function saveInformation($information)
     {
