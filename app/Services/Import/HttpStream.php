@@ -10,22 +10,22 @@ class HttpStream extends HttpInteractionAbstract
 {
     public const HTTP_BATCH_SIZE_IN_BYTES = 1048576;
 
-    public function canProcess(HttpImportInterface $source): bool
+    public function canProcess(HttpImportInterface $provider): bool
     {
-        return $source->getHttpInteractionType() === HttpInteractionsEnum::STREAM;
+        return $provider->getHttpInteractionType() === HttpInteractionsEnum::STREAM;
     }
 
-    public function process(HttpImportInterface $source)
+    public function process(HttpImportInterface $provider)
     {
-        $response = $this->makeRequest($source);
+        $response = $this->makeRequest($provider);
         $filePath = $this->saveResponseInFile($response);
 
-        return $this->getModels($filePath, $source);
+        return $this->getModels($filePath, $provider);
     }
 
-    private function makeRequest($source)
+    private function makeRequest($provider)
     {
-        return $this->client->request('GET', $source->getEndpoint(), [
+        return $this->client->request('GET', $provider->getEndpoint(), [
             'stream' => true,
             'headers' => [
                 'Accept' => 'application/json',
@@ -48,13 +48,13 @@ class HttpStream extends HttpInteractionAbstract
         return $filePath;
     }
 
-    private function getModels($filePath, $source)
+    private function getModels($filePath, $provider)
     {
         $handle = fopen($filePath, 'r');
         while (!feof($handle)) {
             $line = fgets($handle);
 
-            if ($item = $source->getCallbackForExtractModel()($line)) {
+            if ($item = $provider->getCallbackForExtractModel()($line)) {
                 yield $item;
             }
         }

@@ -5,14 +5,13 @@ namespace Tests\Unit;
 use App\Services\Import\HttpInteractionService;
 use App\Services\Import\Providers\PornhubActorsImport;
 use Tests\TestCase;
-use GuzzleHttp\Client;
 
 class PornhubActorsApiTest extends TestCase
 {
     public function testImport()
     {
         $httpInteractionService = \Mockery::mock(HttpInteractionService::class);
-        $service = $this->getMockOfTestedServiceWithHttpInteractionService(
+        $service = $this->getMockOfTestedService(
             $httpInteractionService,
             ['saveInformation','isLimitReached','clearCache']
         );        
@@ -60,31 +59,15 @@ class PornhubActorsApiTest extends TestCase
 
     private function getMockOfTestedServiceOnlyWithMethodsToMock($methodsToMock = [])
     {
-        $client = new Client();
         $httpInteractionService = \Mockery::mock(HttpInteractionService::class);
 
         return $this->getMockOfTestedService(
-            $client, 
-            $httpInteractionService,
-            $methodsToMock
-        );
-    }
-
-    private function getMockOfTestedServiceWithHttpInteractionService(
-        $httpInteractionService,
-        $methodsToMock = []
-    ) {
-        $client = new Client();
-
-        return $this->getMockOfTestedService(
-            $client, 
             $httpInteractionService,
             $methodsToMock
         );
     }
 
     private function getMockOfTestedService(
-        $client,
         $httpInteractionService,
         array $methodsToMock = []
     ) {
@@ -93,7 +76,7 @@ class PornhubActorsApiTest extends TestCase
             implode(',', $methodsToMock)
         );
 
-        return \Mockery::mock($className, [$client, $httpInteractionService])
+        return \Mockery::mock($className, [$httpInteractionService])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
     }

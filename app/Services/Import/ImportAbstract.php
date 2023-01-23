@@ -4,11 +4,9 @@ namespace App\Services\Import;
 
 use App\Enums\HttpInteractionsEnum;
 use App\Interfaces\HttpStreamImportInterface;
-use GuzzleHttp\Client;
 
 abstract class ImportAbstract
 {
-    protected Client $client;
     protected HttpInteractionService $httpInteraction;
     protected $index = 0;
 
@@ -16,9 +14,8 @@ abstract class ImportAbstract
 
     abstract protected function clearCache();
 
-    public function __construct(Client $client, HttpInteractionService $httpInteraction)
+    public function __construct(HttpInteractionService $httpInteraction)
     {
-        $this->client = $client;
         $this->httpInteraction = $httpInteraction;
     }
 
