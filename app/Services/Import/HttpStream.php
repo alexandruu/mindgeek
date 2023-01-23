@@ -5,6 +5,7 @@ namespace App\Services\Import;
 use App\Enums\HttpInteractionsEnum;
 use App\Interfaces\HttpImportInterface;
 use Illuminate\Support\Facades\Storage;
+use Psr\Http\Message\StreamInterface;
 
 class HttpStream extends HttpInteractionAbstract
 {
@@ -18,9 +19,9 @@ class HttpStream extends HttpInteractionAbstract
     public function process(HttpImportInterface $provider)
     {
         $response = $this->makeRequest($provider);
-        $filePath = $this->saveResponseInFile($response);
+        $filePath = $this->saveResponseInFile($response->getBody());
 
-        return $this->getModels($filePath, $provider);
+        return $this->extractModels($filePath, $provider->getCallbackForExtractModel());
     }
 
     private function makeRequest($provider)
@@ -33,10 +34,9 @@ class HttpStream extends HttpInteractionAbstract
         ]);
     }
 
-    private function saveResponseInFile($response): string
+    private function saveResponseInFile(StreamInterface $body): string
     {
-        $body = $response->getBody();
-        $filePath = Storage::disk()->path("json" . date('YmdHis') . ".json");
+        $filePath = $this->generateFilePath();
 
         while (!$body->eof()) {
             $line = $body->read(self::HTTP_BATCH_SIZE_IN_BYTES);
@@ -48,15 +48,24 @@ class HttpStream extends HttpInteractionAbstract
         return $filePath;
     }
 
-    private function getModels($filePath, $provider)
+    private function extractModels($filePath, callable $callback)
     {
         $handle = fopen($filePath, 'r');
         while (!feof($handle)) {
             $line = fgets($handle);
-
-            if ($item = $provider->getCallbackForExtractModel()($line)) {
+            if ($item = $callback($line)) {
                 yield $item;
             }
         }
+    }
+
+    private function generateFileName(): string
+    {
+        return "json_" . date('YmdHis') . ".json";
+    }
+
+    private function generateFilePath(): string
+    {
+        return Storage::disk()->path($this->generateFileName());
     }
 }

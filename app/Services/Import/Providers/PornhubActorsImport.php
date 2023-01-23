@@ -27,13 +27,11 @@ class PornhubActorsImport extends ImportActorsAbstract implements HttpStreamImpo
     {
         return function ($line) {
             $start = strpos($line, '{"attr');
-            if ($start) {
+            if ($start !== false) {
                 $end = strpos($line, "\n", $start) - 1;
-
                 if ($end > $start) {
                     $jsonEncoded = substr($line, $start, $end - $start);
                     $item = json_decode($jsonEncoded, true);
-
                     if (json_last_error() === JSON_ERROR_NONE && \is_array($item)) {
                         return $item;
                     }

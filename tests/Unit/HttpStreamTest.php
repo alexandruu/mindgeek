@@ -17,7 +17,7 @@ class HttpStreamTest extends TestCase
     {
         parent::setUp();
     
-        $this->client = new Client();
+        $this->client = \Mockery::mock(Client::class);
         $this->service = new HttpStream($this->client);
     }
     
@@ -41,6 +41,33 @@ class HttpStreamTest extends TestCase
             ->andReturn('nothing');
 
         $this->assertFalse($this->service->canProcess($provider));
+    }
+
+    public function testProcess()
+    {
+        $provider = $this->getMockOfProvider();
+        $service = \Mockery::mock('App\Services\Import\HttpStream', [], [$this->client])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();        
+        $body = \Mockery::mock('GuzzleHttp\Psr7\Stream');
+        $body->shouldReceive('eof')
+            ->once()
+            ->andReturn(false)
+            ->shouldReceive('read')
+            ->once()
+            ->andReturn(PornhubActorsApiTest::RESPONSE_LINE)
+            ->shouldReceive('eof')
+            ->once()
+            ->andReturn(true);
+        $response = \Mockery::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')
+            ->once()
+            ->andReturn($body);
+        $this->client->shouldReceive('request')
+            ->once()
+            ->andReturn($response);
+
+        $service->process($provider);
     }
 
     private function getMockOfProvider(array $methodsToMock = [])

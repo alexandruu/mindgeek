@@ -12,36 +12,36 @@ class HttpInteractionService
 {
     private $strategies = [];
 
-    public function import(HttpImportInterface $source)
+    public function import(HttpImportInterface $provider)
     {
         foreach ($this->strategies as $strategy) {
-            if ($strategy->canProcess($source)) {
+            if ($strategy->canProcess($provider)) {
                 try {
-                    return $strategy->process($source);
+                    return $strategy->process($provider);
                 } catch (Exception $e) {
-                    $this->throwHttpInteractionException($e, $strategy, $source);
+                    $this->throwHttpInteractionException($e, $strategy, $provider);
                 }
             }
         }
 
-        $this->throwNoStrategyFoundException($source);
+        $this->throwNoStrategyFoundException($provider);
     }
 
-    private function throwHttpInteractionException($e, $strategy, $source)
+    private function throwHttpInteractionException($e, $strategy, $provider)
     {
         throw new HttpInteractionException(sprintf(
-            'Strategy "%s" for source "%s" encountered an error: %s',
+            'Strategy "%s" for provider "%s" encountered an error: %s',
             get_class($strategy),
-            $source,
+            get_class($provider),
             $e->getMessage()
         ));
     }
 
-    private function throwNoStrategyFoundException($source)
+    private function throwNoStrategyFoundException($provider)
     {
         throw new NoStrategyFoundException(sprintf(
             'No strategy found for source "%s".',
-            $source->getHttpInteractionType()
+            $provider->getHttpInteractionType()
         ));
     }
 

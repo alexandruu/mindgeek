@@ -11,36 +11,36 @@ class ImportService
 {
     private $strategies = [];
 
-    public function import(string $source)
+    public function import(string $sourceTag)
     {
         foreach ($this->strategies as $strategy) {
-            if ($strategy->canImport($source)) {
+            if ($strategy->canImport($sourceTag)) {
                 try {
                     return $strategy->import();
                 } catch (Exception $e) {
-                    $this->throwImportServiceException($e, $strategy, $source);
+                    $this->throwImportServiceException($e, $strategy, $sourceTag);
                 }
             }
         }
 
-        $this->throwNoStrategyFoundException($source);
+        $this->throwNoStrategyFoundException($sourceTag);
     }
 
-    private function throwImportServiceException($e, $strategy, $source)
+    private function throwImportServiceException($e, $strategy, $sourceTag)
     {
         throw new ImportServiceException(sprintf(
             'Strategy "%s" for source "%s" encountered an error: %s',
             get_class($strategy),
-            $source,
+            $sourceTag,
             $e->getMessage()
         ));
     }
 
-    private function throwNoStrategyFoundException($source)
+    private function throwNoStrategyFoundException($sourceTag)
     {
         throw new NoStrategyFoundException(sprintf(
             'No strategy found for source "%s".',
-            $source
+            $sourceTag
         ));
     }
 

@@ -6,6 +6,7 @@
             <div class="p-2 bd-highlight">
                 <form action="{{ route('actors.store') }}" method="post" style="display: inline">
                     @csrf
+                    <input type="hidden" name="XDEBUG_SESSION_START" value="mindgeek">
                     <button type="submit" class="btn btn-outline-danger">Import actors from Pornhub</button>
                 </form>
             </div>
