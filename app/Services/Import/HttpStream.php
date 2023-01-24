@@ -4,12 +4,22 @@ namespace App\Services\Import;
 
 use App\Enums\HttpInteractionsEnum;
 use App\Interfaces\HttpImportInterface;
-use Illuminate\Support\Facades\Storage;
+use App\Services\Storage;
+use GuzzleHttp\Client;
 use Psr\Http\Message\StreamInterface;
 
 class HttpStream extends HttpInteractionAbstract
 {
     public const HTTP_BATCH_SIZE_IN_BYTES = 1048576;
+
+    private Storage $storage;
+
+    public function __construct(Client $client, Storage $storage)
+    {
+        parent::__construct($client);
+
+        $this->storage = $storage;
+    }
 
     public function canProcess(HttpImportInterface $provider): bool
     {
@@ -40,9 +50,7 @@ class HttpStream extends HttpInteractionAbstract
 
         while (!$body->eof()) {
             $line = $body->read(self::HTTP_BATCH_SIZE_IN_BYTES);
-            $file = fopen($filePath, "a+b");
-            fwrite($file, $line);
-            fclose($file);
+            $this->storage->pointerAppendBinary($filePath, $line);
         }
 
         return $filePath;
@@ -50,9 +58,9 @@ class HttpStream extends HttpInteractionAbstract
 
     private function extractModels($filePath, callable $callback)
     {
-        $handle = fopen($filePath, 'r');
-        while (!feof($handle)) {
-            $line = fgets($handle);
+        $filePointer = $this->storage->pointerRead($filePath);
+        while (!$this->storage->isEndOfFile($filePointer)) {
+            $line = $this->storage->readOneLine($filePointer);
             if ($item = $callback($line)) {
                 yield $item;
             }
@@ -66,6 +74,6 @@ class HttpStream extends HttpInteractionAbstract
 
     private function generateFilePath(): string
     {
-        return Storage::disk()->path($this->generateFileName());
+        return $this->storage->path($this->generateFileName());
     }
 }

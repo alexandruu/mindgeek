@@ -29,3 +29,5 @@ Also the ENDPOINT from this project is treated as one of many possible providers
 ## Tests
 
 Yes, I've wrote some tests.
+
+<img src="https://github.com/alexandruu/mindgeek/blob/master/UnitTests.png" alt="UML">

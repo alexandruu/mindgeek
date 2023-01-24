@@ -5,12 +5,14 @@ namespace Tests\Unit;
 use App\Services\Import\HttpInteractionService;
 use App\Services\Import\HttpStream;
 use App\Services\Import\Providers\PornhubActorsImport;
+use App\Services\Storage;
 use GuzzleHttp\Client;
 use Tests\TestCase;
 
 class HttpStreamTest extends TestCase
 {
     protected Client $client;
+    protected Storage $storage;
     protected HttpStream $service;
 
     protected function setUp(): void
@@ -18,7 +20,8 @@ class HttpStreamTest extends TestCase
         parent::setUp();
     
         $this->client = \Mockery::mock(Client::class);
-        $this->service = new HttpStream($this->client);
+        $this->storage = \Mockery::mock(Storage::class);
+        $this->service = new HttpStream($this->client, $this->storage);
     }
     
     public function testCanProcess()
@@ -45,8 +48,23 @@ class HttpStreamTest extends TestCase
 
     public function testProcess()
     {
-        $provider = $this->getMockOfProvider();
-        $service = \Mockery::mock('App\Services\Import\HttpStream', [], [$this->client])
+        $storage = \Mockery::mock('App\Services\Storage');
+        $storage->shouldReceive('pointerAppendBinary')
+            ->once()
+            ->shouldReceive('path')
+            ->once()
+            ->andReturn('test')
+            ->shouldReceive('pointerRead')
+            ->once()
+            ->shouldReceive('isEndOfFile')
+            ->once()
+            ->andReturn(false)
+            ->shouldReceive('readOneLine')
+            ->once()
+            ->shouldReceive('isEndOfFile')
+            ->once()
+            ->andReturn(true);
+        $service = \Mockery::mock('App\Services\Import\HttpStream', [], [$this->client, $storage])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();        
         $body = \Mockery::mock('GuzzleHttp\Psr7\Stream');
@@ -66,8 +84,10 @@ class HttpStreamTest extends TestCase
         $this->client->shouldReceive('request')
             ->once()
             ->andReturn($response);
+        $provider = $this->getMockOfProvider();
 
-        $service->process($provider);
+        $result = $service->process($provider);
+        $result->next();
     }
 
     private function getMockOfProvider(array $methodsToMock = [])
