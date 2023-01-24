@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface HttpInteractionInterface
 {
-    public function canProcess(HttpImportInterface $httpImportInterface): bool;
+    public function canProcess(HttpImportInterface | HttpStreamImportInterface $httpImportInterface): bool;
 
-    public function process(HttpImportInterface $httpImportInterface);
+    public function process(HttpImportInterface | HttpStreamImportInterface $httpImportInterface);
 }

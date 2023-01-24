@@ -4,8 +4,11 @@ namespace App\Services\Import;
 
 use App\Enums\HttpInteractionsEnum;
 use App\Interfaces\HttpImportInterface;
+use App\Interfaces\HttpStreamImportInterface;
 use App\Services\Storage;
+use Generator;
 use GuzzleHttp\Client;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 class HttpStream extends HttpInteractionAbstract
@@ -21,12 +24,12 @@ class HttpStream extends HttpInteractionAbstract
         $this->storage = $storage;
     }
 
-    public function canProcess(HttpImportInterface $provider): bool
+    public function canProcess(HttpImportInterface | HttpStreamImportInterface $provider): bool
     {
         return $provider->getHttpInteractionType() === HttpInteractionsEnum::STREAM;
     }
 
-    public function process(HttpImportInterface $provider)
+    public function process(HttpImportInterface | HttpStreamImportInterface $provider): Generator
     {
         $response = $this->makeRequest($provider);
         $filePath = $this->saveResponseInFile($response->getBody());
@@ -34,7 +37,7 @@ class HttpStream extends HttpInteractionAbstract
         return $this->extractModels($filePath, $provider->getCallbackForExtractModel());
     }
 
-    private function makeRequest($provider)
+    private function makeRequest(HttpStreamImportInterface $provider): ResponseInterface
     {
         return $this->client->request('GET', $provider->getEndpoint(), [
             'stream' => true,
@@ -56,7 +59,7 @@ class HttpStream extends HttpInteractionAbstract
         return $filePath;
     }
 
-    private function extractModels($filePath, callable $callback)
+    private function extractModels($filePath, callable $callback): Generator
     {
         $filePointer = $this->storage->pointerRead($filePath);
         while (!$this->storage->isEndOfFile($filePointer)) {
