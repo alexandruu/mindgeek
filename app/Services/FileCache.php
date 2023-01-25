@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Exceptions\FileIsNotAccessibleCacheException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class FileCache extends CacheAbstract
@@ -16,13 +15,13 @@ class FileCache extends CacheAbstract
         $this->saveFileInCache($fileName, $url);
         $this->saveFileFromCacheToDisk($fileName);
 
-        return $this->getFilePathFromDisk($fileName);
+        return $this->storage->url($fileName);
     }
 
-    protected function generateFileName($value)
+    protected function generateFileName($filePath)
     {
-        $extension = pathinfo($value, PATHINFO_EXTENSION);
-        return md5($value) . "." . $extension;
+        $extension = $this->storage->extension($filePath);
+        return md5($filePath) . "." . $extension;
     }
 
     protected function saveFileInCache($fileName, $url)
@@ -44,17 +43,17 @@ class FileCache extends CacheAbstract
 
     protected function saveFileFromCacheToDisk($fileName)
     {
-        if (Storage::disk()->exists($fileName)) {
+        if ($this->storage->exists($fileName)) {
             return true;
         }
 
-        Storage::disk()->put($fileName, base64_decode(Cache::get($fileName)));
+        $content = $this->getFileContentFromCache($fileName);
 
-        return true;
+        return $this->storage->put($fileName, $content);
     }
 
-    protected function getFilePathFromDisk($fileName)
+    protected function getFileContentFromCache($fileName)
     {
-        return Storage::url($fileName);
+        return base64_decode(Cache::get($fileName));
     }
 }

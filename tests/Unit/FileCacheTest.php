@@ -3,47 +3,88 @@
 namespace Tests\Unit;
 
 use App\Exceptions\FileIsNotAccessibleCacheException;
+use App\Interfaces\StorageInterface;
 use App\Services\FileCache;
+use App\Services\Storage;
 use PHPUnit\Framework\TestCase;
 
 class FileCacheTest extends TestCase
 {
+    protected StorageInterface $storage;
+    protected FileCache $service;
+    protected $result;
+    
+    protected function setUp(): void
+    {
+        parent::setUp();
+    
+        $this->storage = \Mockery::mock(Storage::class);
+        $this->service = $this->getMockOfFileCache(['generateFileName', 'saveFileInCache', 'saveFileFromCacheToDisk']);
+    }
+    
     public function testExceptionIsThrownWhenFileIsNotSavedInCache()
     {
-        $fileCache = \Mockery::mock('App\Services\FileCache[generateFileName,saveFileInCache,saveFileFromCacheToDisk,getFilePathFromDisk]')
-            ->shouldAllowMockingProtectedMethods();
-        
-        $fileCache->shouldReceive('generateFileName')
+        $this->setExceptionExpectation();
+        $this->prepareFileCacheToThrowExceptionWhenTringToSaveFileInCache();
+        $this->requestAFile();
+    }
+
+    public function testEntireFlowWhenRequestingAFile()
+    {
+        $this->prepareStorageAndFileCache();
+        $this->requestAFile();
+        $this->checkIfUrlForFileIsReturned();
+    }
+
+    private function setExceptionExpectation()
+    {
+        $this->expectException(FileIsNotAccessibleCacheException::class);
+    }
+
+    private function prepareFileCacheToThrowExceptionWhenTringToSaveFileInCache()
+    {
+        $this->service->shouldReceive('generateFileName')
             ->once()
             ->shouldReceive('saveFileInCache')
             ->once()
             ->andThrow(new FileIsNotAccessibleCacheException())
-            ->shouldNotReceive('saveFileFromCacheToDisk')
-            ->shouldNotReceive('getFilePathFromDisk');
-        
-        $this->expectException(FileIsNotAccessibleCacheException::class);
-
-        $result = $fileCache->get('test');
+            ->shouldNotReceive('saveFileFromCacheToDisk');
     }
 
-    public function testHappyPath()
+    private function requestAFile()
     {
-        $fileCache = \Mockery::mock('App\Services\FileCache[generateFileName,saveFileInCache,saveFileFromCacheToDisk,getFilePathFromDisk]')
-            ->shouldAllowMockingProtectedMethods();
+        $this->result = $this->service->get('test');
+    }
+
+    private function prepareStorageAndFileCache()
+    {
+        $this->storage->shouldReceive('url')
+            ->once()
+            ->andReturn('test.jpg');
         
-        $fileCache->shouldReceive('generateFileName')
+        $this->service->shouldReceive('generateFileName')
             ->once()
             ->shouldReceive('saveFileInCache')
             ->once()
             ->andReturn(true)
             ->shouldReceive('saveFileFromCacheToDisk')
-            ->once()            
-            ->shouldReceive('getFilePathFromDisk')
-            ->once()
-            ->andReturn('test.jpg');
+            ->once();
+    }
 
-        $result = $fileCache->get('test.jpg');
+    private function checkIfUrlForFileIsReturned()
+    {
+        $this->assertEquals('test.jpg', $this->result);
+    }
 
-        $this->assertEquals('test.jpg', $result);
+    private function getMockOfFileCache(array $methodsToMock = [])
+    {
+        $className = sprintf(
+            'App\Services\FileCache[%s]',
+            implode(',', $methodsToMock)
+        );
+
+        return \Mockery::mock($className, [$this->storage])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
     }
 }

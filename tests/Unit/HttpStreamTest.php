@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Interfaces\HttpStreamImportInterface;
+use App\Interfaces\StorageInterface;
 use App\Services\Import\HttpInteractionService;
 use App\Services\Import\HttpStream;
 use App\Services\Import\Providers\PornhubActorsImport;
@@ -13,7 +14,7 @@ use Tests\TestCase;
 class HttpStreamTest extends TestCase
 {
     protected Client $client;
-    protected Storage $storage;
+    protected StorageInterface $storage;
     protected HttpStream $service;
     protected HttpStreamImportInterface $provider;
     protected $result;

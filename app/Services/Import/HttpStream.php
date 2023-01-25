@@ -5,7 +5,7 @@ namespace App\Services\Import;
 use App\Enums\HttpInteractionsEnum;
 use App\Interfaces\HttpImportInterface;
 use App\Interfaces\HttpStreamImportInterface;
-use App\Services\Storage;
+use App\Interfaces\StorageInterface;
 use Generator;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
@@ -15,9 +15,9 @@ class HttpStream extends HttpInteractionAbstract
 {
     public const HTTP_BATCH_SIZE_IN_BYTES = 1048576;
 
-    private Storage $storage;
+    private StorageInterface $storage;
 
-    public function __construct(Client $client, Storage $storage)
+    public function __construct(Client $client, StorageInterface $storage)
     {
         parent::__construct($client);
 
