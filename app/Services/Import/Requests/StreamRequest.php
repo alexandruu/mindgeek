@@ -1,43 +1,42 @@
 <?php
 
-namespace App\Services\Import;
+namespace App\Services\Import\Requests;
 
-use App\Enums\HttpInteractionsEnum;
-use App\Interfaces\HttpImportInterface;
-use App\Interfaces\HttpStreamImportInterface;
+use App\Enums\RequestEnum;
+use App\Interfaces\ProviderInterface;
+use App\Interfaces\RequestInterface;
 use App\Interfaces\StorageInterface;
-use Generator;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-class HttpStream extends HttpInteractionAbstract
+class StreamRequest implements RequestInterface
 {
     public const HTTP_BATCH_SIZE_IN_BYTES = 1048576;
 
+    private Client $client;
     private StorageInterface $storage;
 
     public function __construct(Client $client, StorageInterface $storage)
     {
-        parent::__construct($client);
-
+        $this->client = $client;
         $this->storage = $storage;
     }
 
-    public function canProcess(HttpImportInterface | HttpStreamImportInterface $provider): bool
+    public function canRequest(ProviderInterface $provider): bool
     {
-        return $provider->getHttpInteractionType() === HttpInteractionsEnum::STREAM;
+        return $provider->getRequestType() === RequestEnum::STREAM;
     }
 
-    public function process(HttpImportInterface | HttpStreamImportInterface $provider): Generator
+    public function request(ProviderInterface $provider)
     {
         $response = $this->makeRequest($provider);
         $filePath = $this->saveResponseInFile($response->getBody());
 
-        return $this->extractModels($filePath, $provider->getCallbackForExtractModel());
+        $provider->setResponse($filePath);
     }
 
-    private function makeRequest(HttpStreamImportInterface $provider): ResponseInterface
+    private function makeRequest(ProviderInterface $provider): ResponseInterface
     {
         return $this->client->request('GET', $provider->getEndpoint(), [
             'stream' => true,
@@ -57,17 +56,6 @@ class HttpStream extends HttpInteractionAbstract
         }
 
         return $filePath;
-    }
-
-    private function extractModels($filePath, callable $callback): Generator
-    {
-        $filePointer = $this->storage->pointerRead($filePath);
-        while (!$this->storage->isEndOfFile($filePointer)) {
-            $line = $this->storage->readOneLine($filePointer);
-            if ($item = $callback($line)) {
-                yield $item;
-            }
-        }
     }
 
     private function generateFileName(): string

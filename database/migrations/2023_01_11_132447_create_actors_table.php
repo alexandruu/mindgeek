@@ -14,11 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('actors', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', '128')->index();
-            $table->string('license', '32')->nullable();
-            $table->string('link', '1024')->nullable();
-            $table->timestamps();
+            $table->string('id', 128)->primary();
+            $table->string('name', 128)->index();
+            $table->string('license', 32)->nullable();
+            $table->string('link', 1024)->nullable();
+            $table->timestamp('created_at')->useCurrent()->index();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate()->index();
         });
     }
 

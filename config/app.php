@@ -195,7 +195,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\ImportProvider::class,
-        App\Providers\HttpInteractionProvider::class,
+        App\Providers\RequestProvider::class,
+        App\Providers\ResponseProvider::class,
+        App\Providers\NormalizeResponseProvider::class,
+        App\Providers\SaverProvider::class,
 
     ],
 

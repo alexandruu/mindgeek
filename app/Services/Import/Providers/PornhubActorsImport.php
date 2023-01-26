@@ -2,43 +2,48 @@
 
 namespace App\Services\Import\Providers;
 
-use App\Enums\HttpInteractionsEnum;
-use App\Interfaces\HttpStreamImportInterface;
-use App\Services\Import\ImportActorsAbstract;
+use App\Enums\CategoryEnum;
+use App\Enums\RequestEnum;
+use App\Interfaces\ProviderInterface;
 
-class PornhubActorsImport extends ImportActorsAbstract implements HttpStreamImportInterface
+class PornhubActorsImport implements ProviderInterface
 {
     public const ID = 'pornhub.actors';
+    public const CATEGORY = CategoryEnum::ACTORS;
+    public const REQUEST_TYPE = RequestEnum::STREAM;
     public const ENDPOINT = 'https://www.pornhub.com/files/json_feed_pornstars.json';
-    public const NUMBER_OF_MODELS_TO_IMPORT = 100;
-    public const HTTP_INTERACTION_TYPE = HttpInteractionsEnum::STREAM;
+    public const NUMBER_OF_MODELS_TO_IMPORT = 15000;
+
+    private string $response;
+
+    public function hasCategory(CategoryEnum $category): bool
+    {
+        return $this->getCategory() === $category;
+    }
 
     public function getEndpoint()
     {
         return self::ENDPOINT;
     }
 
-    public function getHttpInteractionType()
+    public function getCategory()
     {
-        return self::HTTP_INTERACTION_TYPE;
+        return self::CATEGORY;
     }
 
-    public function getCallbackForExtractModel(): callable
+    public function getRequestType()
     {
-        return function ($line) {
-            $start = strpos($line, '{"attr');
-            if ($start !== false) {
-                $end = strpos($line, "\n", $start) - 1;
-                if ($end > $start) {
-                    $jsonEncoded = substr($line, $start, $end - $start);
-                    $item = json_decode($jsonEncoded, true);
-                    if (json_last_error() === JSON_ERROR_NONE && \is_array($item)) {
-                        return $item;
-                    }
-                }
-            }
+        return self::REQUEST_TYPE;
+    }
 
-            return false;
-        };
+    public function getResponse(): string
+    {
+        return $this->response;
+    }
+
+    public function setResponse(string $response): self
+    {
+        $this->response = $response;
+        return $this;
     }
 }

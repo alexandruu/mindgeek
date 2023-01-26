@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\ActorsController;
+use App\Models\Actor;
+use App\Models\Thumbnail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,5 +18,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [ActorsController::class, 'index'])->name('actors.index');
-Route::get('/actors/{actor}', [ActorsController::class, 'show'])->name('actors.show');
+Route::get('/actors/{id}', [ActorsController::class, 'show'])->name('actors.show');
 Route::post('/actors', [ActorsController::class, 'store'])->name('actors.store');

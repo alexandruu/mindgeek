@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Services\Import;
 
 use App\Interfaces\HttpStreamImportInterface;
 use App\Interfaces\StorageInterface;
@@ -10,6 +10,7 @@ use App\Services\Import\Providers\PornhubActorsImport;
 use App\Services\Storage;
 use GuzzleHttp\Client;
 use Tests\TestCase;
+use Tests\Unit\Services\Import\Providers\PornhubActorsApiTest;
 
 class HttpStreamTest extends TestCase
 {

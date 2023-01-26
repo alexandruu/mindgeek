@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', '1200');
 // ini_set('memory_limit', '-1');
 
+use App\Enums\CategoryEnum;
 use App\Interfaces\ActorsInterface;
 use App\Models\Actor;
 use App\Services\Import\ImportService;
@@ -21,8 +22,10 @@ class ActorsController extends Controller
             ->with('actors', $actors);
     }
 
-    public function show(Actor $actor)
+    public function show($id, ActorsInterface $actorsService)
     {
+        $actor = $actorsService->getById($id);
+
         return view('actors.show')
             ->with('actor', $actor);
     }
@@ -32,7 +35,7 @@ class ActorsController extends Controller
         $error = null;
 
         try {
-            $import->import('pornhub.actors');
+            $import->import(CategoryEnum::ACTORS);
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }

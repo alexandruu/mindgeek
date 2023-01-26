@@ -30,8 +30,8 @@
                     <tr>
                         <td>{{ $actor->name }}</td>
                         <td>
-                            @if (!empty($actor->thumbnails) && !empty($actor->thumbnails[0]->urls))
-                                <img src="{{ $actor->thumbnails[0]->urls[0]->url }}" alt="Poster">
+                            @if (!empty($actor->url_cache))
+                                <img src="{{ $actor->url_cache }}" alt="Poster">
                             @else
                                 No image for this actor.
                             @endif
@@ -45,7 +45,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item fs-6"
-                                            href="{{ route('actors.show', ['actor' => $actor->id]) }}">View details</a>
+                                            href="{{ route('actors.show', ['id' => $actor->id]) }}">View details</a>
                                     </li>
                                 </ul>
                             </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Services\Import\Providers;
 
 use App\Services\Import\HttpInteractionService;
 use App\Services\Import\Providers\PornhubActorsImport;

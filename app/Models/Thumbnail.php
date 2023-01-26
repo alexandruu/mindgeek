@@ -9,6 +9,8 @@ class Thumbnail extends Model
 {
     use HasFactory;
 
+    public $incrementing = false;
+
     protected $fillable = ['height', 'width', 'type'];
 
     public function actor()

@@ -2,50 +2,77 @@
 
 namespace App\Services\Import;
 
+use App\Enums\CategoryEnum;
 use App\Exceptions\ImportServiceException;
 use App\Exceptions\NoStrategyFoundException;
-use App\Interfaces\ImportInterface;
+use App\Interfaces\ProviderInterface;
 use Exception;
 
 class ImportService
 {
-    private $strategies = [];
+    private $providers = [];
+    private $processedProviders = 0;
+    private RequestService $requestService;
+    private ResponseService $responseService;
 
-    public function import(string $sourceTag)
+    public function __construct(
+        RequestService $requestService,
+        ResponseService $responseService
+    ) {
+        $this->requestService = $requestService;
+        $this->responseService = $responseService;
+    }
+
+    public function import(CategoryEnum $category)
     {
-        foreach ($this->strategies as $strategy) {
-            if ($strategy->canImport($sourceTag)) {
+        foreach ($this->providers as $provider) {
+            if ($provider->hasCategory($category)) {
+                $this->incrementCounterForProcessedProviders();
+
                 try {
-                    return $strategy->import();
+                    $this->requestService->request($provider);
+                    $this->responseService->import($provider);
                 } catch (Exception $e) {
-                    $this->throwImportServiceException($e, $strategy, $sourceTag);
+                    $this->throwImportServiceException($e, $provider, $category);
                 }
             }
         }
 
-        $this->throwNoStrategyFoundException($sourceTag);
+        $this->checkHowManyStrategiesWereAppliedForCategory($category);
     }
 
-    private function throwImportServiceException($e, $strategy, $sourceTag)
+    private function checkHowManyStrategiesWereAppliedForCategory($category)
+    {
+        if ($this->processedProviders === 0) {
+            $this->throwNoStrategyFoundException($category);
+        }
+    }
+
+    private function incrementCounterForProcessedProviders()
+    {
+        $this->processedProviders++;
+    }
+
+    private function throwImportServiceException($e, $provider, $category)
     {
         throw new ImportServiceException(sprintf(
-            'Strategy "%s" for source "%s" encountered an error: %s',
-            get_class($strategy),
-            $sourceTag,
+            'Strategy "%s" for category "%s" encountered an error: %s',
+            get_class($provider),
+            $category->name,
             $e->getMessage()
         ));
     }
 
-    private function throwNoStrategyFoundException($sourceTag)
+    private function throwNoStrategyFoundException($category)
     {
         throw new NoStrategyFoundException(sprintf(
-            'No strategy found for source "%s".',
-            $sourceTag
+            'No strategies found for category "%s".',
+            $category->name
         ));
     }
 
-    public function registerStrategy(ImportInterface $strategy)
+    public function registerProvider(ProviderInterface $provider)
     {
-        $this->strategies[] = $strategy;
+        $this->providers[] = $provider;
     }
 }

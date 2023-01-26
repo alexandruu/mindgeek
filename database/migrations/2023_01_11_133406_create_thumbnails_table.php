@@ -14,12 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('thumbnails', function (Blueprint $table) {
-            $table->id();
-            $table->integer('actor_id')->index();
+            $table->string('id', 128)->primary();
+            $table->string('actor_id', 128)->index();
             $table->integer('height');
             $table->integer('width');
             $table->string('type', 16);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
     }
 

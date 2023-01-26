@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('urls', function (Blueprint $table) {
             $table->id();
-            $table->integer('thumbnail_id');
+            $table->string('thumbnail_id', 128);
             $table->string('url', 1024);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
     }
 
