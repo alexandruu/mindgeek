@@ -28,8 +28,7 @@ class ActorsRepository
     public function getById($id)
     {
         return Cache::rememberForever(self::keyForGetById($id), function () use ($id) {
-            return Actor::with('thumbnails', 'thumbnails.urls')
-                ->find($id);
+            return Actor::find($id);
         });
     }
 

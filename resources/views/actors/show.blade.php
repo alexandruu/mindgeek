@@ -16,8 +16,8 @@
             <tr>
                 <td>Thumbnail:</td>
                 <td>
-                    @if (!empty($actor->url_cache))
-                        <img src="{{ $actor->url_cache }}" alt="Poster">
+                    @if ($actor->thumbnails !== null && $actor->thumbnails[0]->urls[0]->url)
+                        <img src="{{ $actor->thumbnails[0]->urls[0]->url }}" alt="Poster">
                     @else
                         No image for this actor.
                     @endif

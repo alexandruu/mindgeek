@@ -16,7 +16,6 @@ class Actor extends Model
     public $incrementing = false;
 
     protected $fillable = ['name', 'license', 'link'];
-    protected $with = ['thumbnails', 'thumbnails.urls'];
 
     public function thumbnails()
     {
