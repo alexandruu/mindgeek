@@ -9,7 +9,7 @@ use App\Repositories\ActorsRepository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class Actors implements SaverInterface
+class ActorsSaver implements SaverInterface
 {
     public const CHUNCK_SIZE_FOR_PERSIST = 100;
 
@@ -49,7 +49,7 @@ class Actors implements SaverInterface
             'license' => $information['license'],
             'link' => $information['link'],
         ];
-        
+
         array_push($this->actors, $actor);
 
         return $actor;
@@ -107,7 +107,7 @@ class Actors implements SaverInterface
     }
 
     private function persist()
-    {        
+    {
         DB::table('actors')->insert($this->actors);
         DB::table('thumbnails')->insert($this->thumbnails);
         DB::table('urls')->insert($this->urls);

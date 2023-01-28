@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Import\Savers\Actors;
+use App\Services\Import\Savers\ActorsSaver;
 use App\Services\Import\SaverService;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +17,7 @@ class SaverProvider extends ServiceProvider
     {
         $this->app->singleton(SaverService::class, function ($app) {
             $service = new SaverService();
-            $service->addSaver($app->make(Actors::class));
+            $service->addSaver($app->make(ActorsSaver::class));
             return $service;
         });
     }
