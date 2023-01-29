@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Interfaces\CacheInterface;
 use App\Interfaces\StorageInterface;
+use App\Services\Cache\CacheService;
 use App\Services\Storage\StorageService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
@@ -10,7 +12,8 @@ use Illuminate\Pagination\Paginator;
 class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
-        StorageInterface::class => StorageService::class
+        StorageInterface::class => StorageService::class,
+        CacheInterface::class => CacheService::class,
     ];
     /**
      * Register any application services.

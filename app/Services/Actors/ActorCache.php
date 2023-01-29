@@ -4,21 +4,21 @@ namespace App\Services\Actors;
 
 use App\Exceptions\FileAlreadyExistCacheException;
 use App\Exceptions\FileIsNotAccessibleCacheException;
+use App\Interfaces\CacheInterface;
 use App\Models\Actor;
 use App\Models\Url;
 use App\Repositories\ActorRepository;
-use App\Services\Caches\FileCache;
 use Illuminate\Support\Facades\Cache;
 
 class ActorCache
 {
     public const PREFIX_FILENAME = 'thumbnails/';
 
-    private FileCache $fileCache;
+    private CacheInterface $cacheService;
 
-    public function __construct(FileCache $fileCache)
+    public function __construct(CacheInterface $cacheService)
     {
-        $this->fileCache = $fileCache;
+        $this->cacheService = $cacheService;
     }
 
     public function cacheImagesFor(Actor $actor)
@@ -40,7 +40,7 @@ class ActorCache
 
     private function updateUrlCache(Url $url): void
     {
-        $url->url_cache = $this->fileCache->saveFileInCache(self::PREFIX_FILENAME, $url->url);
+        $url->url_cache = $this->cacheService->saveFileInCache(self::PREFIX_FILENAME, $url->url);
         $url->save();
     }
 

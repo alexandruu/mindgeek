@@ -1,21 +1,21 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit\Services\Cache;
 
 use App\Exceptions\FileIsNotAccessibleCacheException;
 use App\Interfaces\StorageInterface;
-use App\Services\Caches\FileCache;
+use App\Services\Caches\CacheService;
 use App\Services\Storage\StorageService;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
-class FileCacheTest extends TestCase
+class CacheServiceTest extends TestCase
 {
     public const CACHE_CONTENT_BASE64_ENCODED = 'dGVzdCBjb250ZW50';
     public const CACHE_CONTENT_BASE64_DECODED = 'test content';
 
     protected StorageInterface $storageService;
-    protected FileCache $service;
+    protected CacheService $service;
     protected $result;
 
     protected function setUp(): void
@@ -26,20 +26,20 @@ class FileCacheTest extends TestCase
         $this->service = $this->getMockOfFileCache(['generateFileName']);
     }
 
-    public function testSaveFileInCache()
+    public function testSaveFileInCacheWithSuccess()
     {
         $this->setExpectationsForCacheAndServiceToSaveAFileInCacheWithSuccess();
         $this->requestToCacheAFile();
     }
 
-    public function testExceptionIsThrownWhenFileIsNotSavedInCache()
+    public function testSaveFileInCacheFailWithExceptionWhenCacheIsNotWorking()
     {
         $this->setExceptionExpectation();
         $this->prepareFileCacheToThrowExceptionWhenTringToSaveFileInCache();
         $this->requestToCacheAFile();
     }
 
-    public function testGetFileContentFromCache()
+    public function testGetFileContentFromCacheWithSuccess()
     {
         $this->setExpectationsForCacheToGetFileContentFromCacheWithSuccess();
         $this->requestFileContentFromCache();
@@ -108,7 +108,7 @@ class FileCacheTest extends TestCase
     private function getMockOfFileCache(array $methodsToMock = [])
     {
         $className = sprintf(
-            'App\Services\Caches\FileCache[%s]',
+            'App\Services\Cache\CacheService[%s]',
             implode(',', $methodsToMock)
         );
 

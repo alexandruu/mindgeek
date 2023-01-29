@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Services\Import;
+namespace Tests\Unit\Services\Http;
 
 use App\Interfaces\HttpStreamImportInterface;
 use App\Interfaces\StorageInterface;

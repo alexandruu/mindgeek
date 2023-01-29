@@ -1,16 +1,25 @@
 <?php
 
-namespace App\Services\Caches;
+namespace App\Services\Cache;
 
 use App\Exceptions\FileAlreadyExistCacheException;
 use App\Exceptions\FileIsNotAccessibleCacheException;
 use App\Exceptions\FileNotFoundCacheException;
+use App\Interfaces\CacheInterface;
+use App\Interfaces\StorageInterface;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
-class FileCache extends CacheAbstract
+class CacheService implements CacheInterface
 {
+    protected StorageInterface $storageService;
+
+    public function __construct(StorageInterface $storageService)
+    {
+        $this->storageService = $storageService;
+    }
+
     public function saveFileInCache($prefixFileName = null, $url): string|FileIsNotAccessibleCacheException
     {
         $fileName = $this->generateFileName($prefixFileName, $url);
@@ -41,7 +50,7 @@ class FileCache extends CacheAbstract
 
     protected function generateFileName($prefixFileName = null, $filePath)
     {
-        $extension = $this->storage->extension($filePath);
+        $extension = $this->storageService->extension($filePath);
         return (strlen($prefixFileName) > 0 ? $prefixFileName : null) . md5($filePath) . "." . $extension;
     }
 }
