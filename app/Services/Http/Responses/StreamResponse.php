@@ -1,28 +1,28 @@
 <?php
 
-namespace App\Services\Import\Responses;
+namespace App\Services\Http\Responses;
 
 use App\Enums\RequestEnum;
 use App\Interfaces\ProviderInterface;
 use App\Interfaces\ResponseInterface;
 use App\Interfaces\SaverInterface;
 use App\Interfaces\StorageInterface;
-use App\Services\Import\NormalizeResponseService;
-use App\Services\Import\SaverService;
+use App\Services\Normalizers\NormalizeResponseService;
+use App\Services\Savers\SaverService;
 
 class StreamResponse implements ResponseInterface
 {
-    private StorageInterface $storage;
+    private StorageInterface $storageService;
     private NormalizeResponseService $normalizeResponseService;
     private SaverService $saverService;
     private $index = 0;
 
     public function __construct(
-        StorageInterface $storage,
+        StorageInterface $storageService,
         NormalizeResponseService $normalizeResponseService,
         SaverService $saverService
     ) {
-        $this->storage = $storage;
+        $this->storageService = $storageService;
         $this->normalizeResponseService = $normalizeResponseService;
         $this->saverService = $saverService;
     }
@@ -35,7 +35,7 @@ class StreamResponse implements ResponseInterface
     public function import(ProviderInterface $provider)
     {
         $filePath = $provider->getResponse();
-        $filePointer = $this->storage->pointerRead($filePath);
+        $filePointer = $this->storageService->pointerRead($filePath);
         $saver = $this->saverService->getSaver($provider);
 
         $this->save($provider, $filePointer, $saver);
@@ -44,8 +44,8 @@ class StreamResponse implements ResponseInterface
 
     private function save(ProviderInterface $provider, $filePointer, SaverInterface $saver)
     {
-        while (!$this->storage->isEndOfFile($filePointer)) {
-            $lineFromFile = $this->storage->readOneLine($filePointer);
+        while (!$this->storageService->isEndOfFile($filePointer)) {
+            $lineFromFile = $this->storageService->readOneLine($filePointer);
             $information = $this->normalizeResponseService->normalize($provider, $lineFromFile);
 
             $this->saveInformation($saver, $information);

@@ -2,20 +2,15 @@
 
 namespace App\Providers;
 
-
-
-use App\Interfaces\ActorsInterface;
 use App\Interfaces\StorageInterface;
-use App\Services\PornhubActors;
-use App\Services\Storage;
+use App\Services\Storage\StorageService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
-        ActorsInterface::class => PornhubActors::class,
-        StorageInterface::class => Storage::class
+        StorageInterface::class => StorageService::class
     ];
     /**
      * Register any application services.

@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\FileCache;
+use App\Services\Caches\FileCache;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -17,11 +17,11 @@ class ImageCacheMiddleware
 
     public function handle(Request $request, Closure $next)
     {
-        $imagePath = $this->removeSlashFromLeftPart($request->getPathInfo());
+        $imagePath = $this->removeSlashFromTheBegining($request->getPathInfo());
         return response($this->fileCache->getFileContentFromCache($imagePath))->header('Content-Type', 'image/png');
     }
 
-    private function removeSlashFromLeftPart($imagePath)
+    private function removeSlashFromTheBegining($imagePath)
     {
         return ltrim($imagePath, '/');
     }

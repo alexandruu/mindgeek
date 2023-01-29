@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/phpinfo', function () {
+    phpinfo();
+});
 Route::get('/thumbnails/{image}', function () {
 })->middleware('cache.images');
 Route::get('/', [ActorsController::class, 'index'])->name('actors.index');

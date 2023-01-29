@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Storage;
 
 use App\Interfaces\StorageInterface;
 use Illuminate\Support\Facades\Storage as StorageFacade;
 
-class Storage implements StorageInterface
+class StorageService implements StorageInterface
 {
     public const DEFAULT_DRIVER = 'public';
 

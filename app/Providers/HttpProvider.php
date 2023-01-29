@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
-use App\Services\Import\ImportService;
-use App\Services\Import\Providers\PornhubActorsImport;
-use App\Services\Import\RequestService;
-use App\Services\Import\ResponseService;
+use App\Services\Http\HttpService;
+use App\Services\Actors\Providers\PornhubActorsImport;
+use App\Services\Http\RequestService;
+use App\Services\Http\ResponseService;
 use Illuminate\Support\ServiceProvider;
 
-class ImportProvider extends ServiceProvider
+class HttpProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -17,8 +17,8 @@ class ImportProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(ImportService::class, function ($app) {
-            $service = new ImportService($app->make(RequestService::class), $app->make(ResponseService::class));
+        $this->app->singleton(HttpService::class, function ($app) {
+            $service = new HttpService($app->make(RequestService::class), $app->make(ResponseService::class));
             $service->registerProvider($app->make(PornhubActorsImport::class));
             return $service;
         });

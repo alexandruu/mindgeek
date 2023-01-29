@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Normalizers\Providers\PornhubResponseNormalizer;
-use App\Services\Import\NormalizeResponseService;
+use App\Services\Normalizers\Providers\PornhubResponseNormalizer;
+use App\Services\Normalizers\NormalizeResponseService;
 use Illuminate\Support\ServiceProvider;
 
 class NormalizeResponseProvider extends ServiceProvider

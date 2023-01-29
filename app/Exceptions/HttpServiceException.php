@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ImportServiceException extends Exception
+class HttpServiceException extends Exception
 {
     //
 }

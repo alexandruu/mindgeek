@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ActorImported;
-use App\Services\Import\Caches\ActorCache;
+use App\Services\Actors\ActorCache;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

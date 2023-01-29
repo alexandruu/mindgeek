@@ -6,7 +6,7 @@ use App\Models\Actor;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class ActorsRepository
+class ActorRepository
 {
     public function getActorsPaginated()
     {

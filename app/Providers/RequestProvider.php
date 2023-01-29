@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\Import\Requests\StreamRequest;
-use App\Services\Import\RequestService;
+use App\Services\Http\Requests\StreamRequest;
+use App\Services\Http\RequestService;
 use Illuminate\Support\ServiceProvider;
 
 class RequestProvider extends ServiceProvider

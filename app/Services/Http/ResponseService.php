@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Import;
+namespace App\Services\Http;
 
 use App\Interfaces\ResponseInterface;
 
@@ -17,7 +17,8 @@ class ResponseService
         }
     }
 
-    public function addResponse(ResponseInterface $response) {
+    public function addResponse(ResponseInterface $response)
+    {
         $this->responses[] = $response;
     }
 }

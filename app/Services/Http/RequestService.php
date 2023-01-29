@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Import;
+namespace App\Services\Http;
 
 use App\Interfaces\ProviderInterface;
 use App\Interfaces\RequestInterface;

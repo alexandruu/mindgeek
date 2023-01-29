@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Import\Savers;
+namespace App\Services\Savers\Providers;
 
 use App\Enums\CategoryEnum;
 use App\Interfaces\ProviderInterface;
 use App\Interfaces\SaverInterface;
-use App\Repositories\ActorsRepository;
+use App\Repositories\ActorRepository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -38,7 +38,7 @@ class ActorsSaver implements SaverInterface
 
     public function clearCache()
     {
-        Cache::forget(ActorsRepository::keyForGetActorsPaginates());
+        Cache::forget(ActorRepository::keyForGetActorsPaginates());
     }
 
     private function saveActor($information)

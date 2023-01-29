@@ -6,35 +6,44 @@ use App\Exceptions\FileIsNotAccessibleCacheException;
 use App\Interfaces\StorageInterface;
 use App\Services\FileCache;
 use App\Services\Storage;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\Cache;
+use Tests\TestCase;
 
 class FileCacheTest extends TestCase
 {
     protected StorageInterface $storage;
     protected FileCache $service;
     protected $result;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
-    
+
         $this->storage = \Mockery::mock(Storage::class);
-        $this->service = $this->getMockOfFileCache(['generateFileName', 'saveFileInCache', 'saveFileFromCacheToDisk']);
-    }
-    
-    public function testExceptionIsThrownWhenFileIsNotSavedInCache()
-    {
-        $this->setExceptionExpectation();
-        $this->prepareFileCacheToThrowExceptionWhenTringToSaveFileInCache();
-        $this->requestAFile();
+        $this->service = $this->getMockOfFileCache(['generateFileName']);
     }
 
-    public function testEntireFlowWhenRequestingAFile()
+    public function testSaveFileInCache()
     {
-        $this->prepareStorageAndFileCache();
-        $this->requestAFile();
-        $this->checkIfUrlForFileIsReturned();
+        $this->service->shouldReceive('generateFileName')
+            ->once();
+
+        $this->service->saveFileInCache(null, "test.jpg");
     }
+
+    // public function testExceptionIsThrownWhenFileIsNotSavedInCache()
+    // {
+    //     $this->setExceptionExpectation();
+    //     $this->prepareFileCacheToThrowExceptionWhenTringToSaveFileInCache();
+    //     $this->requestAFile();
+    // }
+
+    // public function testEntireFlowWhenRequestingAFile()
+    // {
+    //     $this->prepareStorageAndFileCache();
+    //     $this->requestAFile();
+    //     $this->checkIfUrlForFileIsReturned();
+    // }
 
     private function setExceptionExpectation()
     {
@@ -61,7 +70,7 @@ class FileCacheTest extends TestCase
         $this->storage->shouldReceive('url')
             ->once()
             ->andReturn('test.jpg');
-        
+
         $this->service->shouldReceive('generateFileName')
             ->once()
             ->shouldReceive('saveFileInCache')

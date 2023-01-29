@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\Import\Responses\StreamResponse;
-use App\Services\Import\ResponseService;
+use App\Services\Http\Responses\StreamResponse;
+use App\Services\Http\ResponseService;
 use Illuminate\Support\ServiceProvider;
 
 class ResponseProvider extends ServiceProvider

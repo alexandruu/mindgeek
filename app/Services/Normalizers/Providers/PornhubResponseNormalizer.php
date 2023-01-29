@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Normalizers\Providers;
+namespace App\Services\Normalizers\Providers;
 
 use App\Interfaces\NormalizerInterface;
-use App\Services\Import\Providers\PornhubActorsImport;
+use App\Services\Actors\Providers\PornhubActorsImport;
 
 class PornhubResponseNormalizer implements NormalizerInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Import\Providers;
+namespace App\Services\Actors\Providers;
 
 use App\Enums\CategoryEnum;
 use App\Enums\RequestEnum;

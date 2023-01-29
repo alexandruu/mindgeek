@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services\Import\Caches;
+namespace App\Services\Actors;
 
 use App\Exceptions\FileAlreadyExistCacheException;
 use App\Exceptions\FileIsNotAccessibleCacheException;
 use App\Models\Actor;
 use App\Models\Url;
-use App\Repositories\ActorsRepository;
-use App\Services\FileCache;
+use App\Repositories\ActorRepository;
+use App\Services\Caches\FileCache;
 use Illuminate\Support\Facades\Cache;
 
 class ActorCache
@@ -46,6 +46,6 @@ class ActorCache
 
     private function clearCacheFor(Actor $actor): void
     {
-        Cache::forget(ActorsRepository::keyForGetById($actor->id));
+        Cache::forget(ActorRepository::keyForGetById($actor->id));
     }
 }

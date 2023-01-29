@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Caches;
 
 use App\Interfaces\StorageInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Import\Requests;
+namespace App\Services\Http\Requests;
 
 use App\Enums\RequestEnum;
 use App\Interfaces\ProviderInterface;

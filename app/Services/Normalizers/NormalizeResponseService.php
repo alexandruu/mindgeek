@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Import;
+namespace App\Services\Normalizers;
 
 use App\Interfaces\NormalizerInterface;
 use App\Interfaces\ProviderInterface;

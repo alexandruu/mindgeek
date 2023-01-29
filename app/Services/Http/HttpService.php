@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Services\Import;
+namespace App\Services\Http;
 
 use App\Enums\CategoryEnum;
-use App\Exceptions\ImportServiceException;
+use App\Exceptions\HttpServiceException;
 use App\Exceptions\NoStrategyFoundException;
 use App\Interfaces\ProviderInterface;
 use Exception;
 
-class ImportService
+class HttpService
 {
     private $providers = [];
     private $processedProviders = 0;
@@ -28,12 +28,12 @@ class ImportService
         foreach ($this->providers as $provider) {
             if ($provider->hasCategory($category)) {
                 $this->incrementCounterForProcessedProviders();
-
+                    
                 try {
                     $this->requestService->request($provider);
                     $this->responseService->import($provider);
                 } catch (Exception $e) {
-                    $this->throwImportServiceException($e, $provider, $category);
+                    $this->throwHttpServiceException($e, $provider, $category);
                 }
             }
         }
@@ -53,10 +53,10 @@ class ImportService
         $this->processedProviders++;
     }
 
-    private function throwImportServiceException($e, $provider, $category)
+    private function throwHttpServiceException($e, $provider, $category)
     {
-        throw new ImportServiceException(sprintf(
-            'Strategy "%s" for category "%s" encountered an error: %s',
+        throw new HttpServiceException(sprintf(
+            'Provider "%s" for category "%s" encountered an error: %s',
             get_class($provider),
             $category->name,
             $e->getMessage()
@@ -66,7 +66,7 @@ class ImportService
     private function throwNoStrategyFoundException($category)
     {
         throw new NoStrategyFoundException(sprintf(
-            'No strategies found for category "%s".',
+            'No providers found for category "%s".',
             $category->name
         ));
     }

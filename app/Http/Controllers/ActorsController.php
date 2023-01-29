@@ -3,39 +3,37 @@
 namespace App\Http\Controllers;
 
 ini_set('max_execution_time', '1200');
-// ini_set('memory_limit', '-1');
 
 use App\Enums\CategoryEnum;
-use App\Interfaces\ActorsInterface;
-use App\Models\Actor;
-use App\Services\Import\ImportService;
+use App\Services\Actors\ActorService;
+use App\Services\Http\HttpService;
 use Illuminate\Http\Request;
 
 class ActorsController extends Controller
 {
-    public function index(Request $request, ActorsInterface $actorsService)
+    public function index(Request $request, ActorService $actorService)
     {
-        $actors = $actorsService->getAll();
+        $actors = $actorService->getAll();
 
         return view('actors.index')
             ->with('error', $request->get('error'))
             ->with('actors', $actors);
     }
 
-    public function show($id, ActorsInterface $actorsService)
+    public function show($id, ActorService $actorService)
     {
-        $actor = $actorsService->getById($id);
+        $actor = $actorService->getById($id);
 
         return view('actors.show')
             ->with('actor', $actor);
     }
 
-    public function store(Request $request, ImportService $import)
+    public function store(Request $request, HttpService $httpService)
     {
         $error = null;
 
         try {
-            $import->import(CategoryEnum::ACTORS);
+            $httpService->import(CategoryEnum::ACTORS);
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }

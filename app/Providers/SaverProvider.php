@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\Import\Savers\ActorsSaver;
-use App\Services\Import\SaverService;
+use App\Services\Savers\Providers\ActorsSaver;
+use App\Services\Savers\SaverService;
 use Illuminate\Support\ServiceProvider;
 
 class SaverProvider extends ServiceProvider
