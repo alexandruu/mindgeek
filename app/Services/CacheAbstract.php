@@ -8,15 +8,11 @@ abstract class CacheAbstract
 {
     protected StorageInterface $storage;
 
-    abstract public function get($url);
+    abstract public function saveFileInCache($prefixFileName = null, $url);
 
-    abstract protected function generateFileName($value);
+    abstract public function getFileContentFromCache($fileName);
 
-    abstract protected function saveFileInCache($fileName, $url);
-
-    abstract protected function saveFileFromCacheToDisk($fileName);
-
-    abstract protected function getFileContentFromCache($fileName);
+    abstract protected function generateFileName($prefixFileName = null, $value);
 
     public function __construct(StorageInterface $storage)
     {

@@ -2,58 +2,46 @@
 
 namespace App\Services;
 
+use App\Exceptions\FileAlreadyExistCacheException;
 use App\Exceptions\FileIsNotAccessibleCacheException;
+use App\Exceptions\FileNotFoundCacheException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
 class FileCache extends CacheAbstract
 {
-    public function get($url)
+    public function saveFileInCache($prefixFileName = null, $url): string|FileIsNotAccessibleCacheException
     {
-        $fileName = $this->generateFileName($url);
-        $this->saveFileInCache($fileName, $url);
-        $this->saveFileFromCacheToDisk($fileName);
+        $fileName = $this->generateFileName($prefixFileName, $url);
 
-        return $this->storage->url($fileName);
+        if (!Cache::has($fileName)) {
+            try {
+                Cache::rememberForever($fileName, function () use ($url) {
+                    return base64_encode(Http::get($url)->body());
+                });
+            } catch (Throwable $e) {
+                throw new FileIsNotAccessibleCacheException();
+            }
+
+            return $fileName;
+        }
+
+        throw new FileAlreadyExistCacheException();
     }
 
-    protected function generateFileName($filePath)
-    {
-        $extension = $this->storage->extension($filePath);
-        return md5($filePath) . "." . $extension;
-    }
-
-    protected function saveFileInCache($fileName, $url)
+    public function getFileContentFromCache($fileName): string|FileNotFoundCacheException
     {
         if (Cache::has($fileName)) {
-            return true;
+            return base64_decode(Cache::get($fileName));
         }
 
-        try {
-            Cache::rememberForever($fileName, function () use ($url) {
-                return base64_encode(Http::get($url)->body());
-            });
-        } catch (Throwable $e) {
-            throw new FileIsNotAccessibleCacheException();
-        }
-
-        return true;
+        throw new FileNotFoundCacheException();
     }
 
-    protected function saveFileFromCacheToDisk($fileName)
+    protected function generateFileName($prefixFileName = null, $filePath)
     {
-        if ($this->storage->exists($fileName)) {
-            return true;
-        }
-
-        $content = $this->getFileContentFromCache($fileName);
-
-        return $this->storage->put($fileName, $content);
-    }
-
-    protected function getFileContentFromCache($fileName)
-    {
-        return base64_decode(Cache::get($fileName));
+        $extension = $this->storage->extension($filePath);
+        return (strlen($prefixFileName) > 0 ? $prefixFileName : null) . md5($filePath) . "." . $extension;
     }
 }

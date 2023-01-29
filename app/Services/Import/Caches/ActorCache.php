@@ -2,6 +2,7 @@
 
 namespace App\Services\Import\Caches;
 
+use App\Exceptions\FileAlreadyExistCacheException;
 use App\Exceptions\FileIsNotAccessibleCacheException;
 use App\Models\Actor;
 use App\Models\Url;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Cache;
 
 class ActorCache
 {
+    public const PREFIX_FILENAME = 'thumbnails/';
+
     private FileCache $fileCache;
 
     public function __construct(FileCache $fileCache)
@@ -27,10 +30,8 @@ class ActorCache
                         $this->updateUrlCache($url);
                         $this->clearCacheFor($actor);
                     }
-                } catch (FileIsNotAccessibleCacheException $e) {
+                } catch (FileIsNotAccessibleCacheException | FileAlreadyExistCacheException $e) {
                 }
-
-                $url->url = $url->url_cache;
 
                 return $url;
             });
@@ -39,11 +40,11 @@ class ActorCache
 
     private function updateUrlCache(Url $url): void
     {
-        $url->url_cache = $this->fileCache->get($url->url);
+        $url->url_cache = $this->fileCache->saveFileInCache(self::PREFIX_FILENAME, $url->url);
         $url->save();
     }
 
-    private function clearCacheFor(\stdClass|Actor $actor): void
+    private function clearCacheFor(Actor $actor): void
     {
         Cache::forget(ActorsRepository::keyForGetActorsPaginates());
         Cache::forget(ActorsRepository::keyForGetById($actor->id));

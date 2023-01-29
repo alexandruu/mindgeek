@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/thumbnails/{image}', function () {
+})->middleware('cache.images');
 Route::get('/', [ActorsController::class, 'index'])->name('actors.index');
 Route::get('/actors/{id}', [ActorsController::class, 'show'])->name('actors.show');
 Route::post('/actors', [ActorsController::class, 'store'])->name('actors.store');
