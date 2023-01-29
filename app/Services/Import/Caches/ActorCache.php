@@ -46,7 +46,6 @@ class ActorCache
 
     private function clearCacheFor(Actor $actor): void
     {
-        Cache::forget(ActorsRepository::keyForGetActorsPaginates());
         Cache::forget(ActorsRepository::keyForGetById($actor->id));
     }
 }

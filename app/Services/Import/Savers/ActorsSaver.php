@@ -20,7 +20,7 @@ class ActorsSaver implements SaverInterface
 
     public function __destruct()
     {
-        $this->persist();
+        $this->flush();
     }
 
     public function supportSaver(ProviderInterface $provider): bool
@@ -33,7 +33,7 @@ class ActorsSaver implements SaverInterface
         $actor = $this->saveActor($information);
         $this->saveThumbnails($actor, $information['thumbnails']);
         $this->updateCounter();
-        $this->flush();
+        $this->flushChunck();
     }
 
     public function clearCache()
@@ -99,14 +99,14 @@ class ActorsSaver implements SaverInterface
         $this->counter++;
     }
 
-    private function flush()
+    private function flushChunck()
     {
         if ($this->counter % self::CHUNCK_SIZE_FOR_PERSIST === 0) {
-            $this->persist();
+            $this->flush();
         }
     }
 
-    private function persist()
+    private function flush()
     {
         DB::table('actors')->insert($this->actors);
         DB::table('thumbnails')->insert($this->thumbnails);
