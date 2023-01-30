@@ -18,8 +18,8 @@ class ActorRepository
                 ->selectRaw('urls.id as url_id')
                 ->selectRaw('urls.url')
                 ->selectRaw('urls.url_cache')
-                ->join('thumbnails', 'actors.id', '=', 'thumbnails.actor_id')
-                ->join('urls', 'thumbnails.id', '=', 'urls.thumbnail_id')
+                ->leftJoin('thumbnails', 'actors.id', '=', 'thumbnails.actor_id')
+                ->leftJoin('urls', 'thumbnails.id', '=', 'urls.thumbnail_id')
                 ->groupBy('id')
                 ->paginate(15);
         });

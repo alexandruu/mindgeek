@@ -25,8 +25,10 @@ class ActorService
         return $actor;
     }
 
-    public function save(array $actor)
+    public function saveFromArray(array $actor)
     {
-        
+        $actorSavedInChunksService = app()->make(ActorsSavedInChuncksService::class);
+
+        $actorSavedInChunksService->save($actor);
     }
 }

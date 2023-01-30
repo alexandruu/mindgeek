@@ -2,20 +2,28 @@
 
 namespace App\Services\Actors;
 
+use App\Services\Cache\CacheService;
 use Illuminate\Support\Facades\DB;
 
 class ActorsSavedInChuncksService
 {
     public const CHUNCK_SIZE_FOR_PERSIST = 100;
 
+    private CacheService $cacheService;
     private $counter = 0;
     private array $actors = [];
     private array $thumbnails = [];
     private array $urls = [];
 
+    public function __construct(CacheService $cacheService)
+    {
+        $this->cacheService = $cacheService;
+    }
+
     public function __destruct()
     {
         $this->flush();
+        $this->cacheService->flush();
     }
 
     public function save($information)

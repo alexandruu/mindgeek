@@ -198,6 +198,7 @@ return [
         App\Providers\RequestProvider::class,
         App\Providers\ResponseProvider::class,
         App\Providers\NormalizeResponseProvider::class,
+        App\Providers\ActorsSavedInChunksServiceProvider::class,
 
     ],
 
