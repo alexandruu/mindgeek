@@ -2,76 +2,61 @@
 
 namespace App\Services\Http\Responses;
 
-use App\Enums\RequestEnum;
-use App\Interfaces\ProviderInterface;
+use App\Dtos\ProviderDto;
+use App\Enums\HttpTypeEnum;
 use App\Interfaces\ResponseInterface;
-use App\Interfaces\SaverInterface;
 use App\Interfaces\StorageInterface;
 use App\Services\Normalizers\NormalizeResponseService;
-use App\Services\Savers\SaverService;
 
 class StreamResponse implements ResponseInterface
 {
     private StorageInterface $storageService;
     private NormalizeResponseService $normalizeResponseService;
-    private SaverService $saverService;
     private $index = 0;
 
     public function __construct(
         StorageInterface $storageService,
-        NormalizeResponseService $normalizeResponseService,
-        SaverService $saverService
+        NormalizeResponseService $normalizeResponseService
     ) {
         $this->storageService = $storageService;
         $this->normalizeResponseService = $normalizeResponseService;
-        $this->saverService = $saverService;
     }
 
-    public function canImport(ProviderInterface $provider): bool
+    public function canImport(ProviderDto $providerDto): bool
     {
-        return $provider->getRequestType() === RequestEnum::STREAM;
+        return $providerDto->getHttpType() === HttpTypeEnum::STREAM;
     }
 
-    public function import(ProviderInterface $provider)
+    public function import(ProviderDto $providerDto)
     {
-        $filePath = $provider->getResponse();
+        $filePath = $providerDto->getResponseBody();
         $filePointer = $this->storageService->pointerRead($filePath);
-        $saver = $this->saverService->getSaver($provider);
 
-        $this->save($provider, $filePointer, $saver);
-        $this->clearCache($saver);
+        return $this->save($providerDto, $filePointer);
     }
 
-    private function save(ProviderInterface $provider, $filePointer, SaverInterface $saver)
+    private function save(ProviderDto $providerDto, $filePointer)
     {
         while (!$this->storageService->isEndOfFile($filePointer)) {
             $lineFromFile = $this->storageService->readOneLine($filePointer);
-            $information = $this->normalizeResponseService->normalize($provider, $lineFromFile);
+            $information = $this->normalizeResponseService->normalize($providerDto, $lineFromFile);
 
-            $this->saveInformation($saver, $information);
+            if ($information === false) {
+                continue;
+            }
 
-            if ($this->isLimitReached($provider)) {
+            yield $information;
+
+            $this->index++;
+
+            if ($this->isLimitReached($providerDto)) {
                 break;
             }
         }
     }
 
-    private function saveInformation($saver, $information)
+    private function isLimitReached(ProviderDto $providerDto): bool
     {
-        if ($information === false) {
-            return;
-        }
-        $saver->save($information);
-        $this->index++;
-    }
-
-    private function clearCache(SaverInterface $saver)
-    {
-        $saver->clearCache();
-    }
-
-    private function isLimitReached(ProviderInterface $provider): bool
-    {
-        return $this->index == $provider::NUMBER_OF_MODELS_TO_IMPORT;
+        return $this->index == $providerDto->getLimitOfImportedItems();
     }
 }

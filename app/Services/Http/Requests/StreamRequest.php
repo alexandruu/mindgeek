@@ -2,8 +2,8 @@
 
 namespace App\Services\Http\Requests;
 
-use App\Enums\RequestEnum;
-use App\Interfaces\ProviderInterface;
+use App\Dtos\ProviderDto;
+use App\Enums\HttpTypeEnum;
 use App\Interfaces\RequestInterface;
 use App\Interfaces\StorageInterface;
 use GuzzleHttp\Client;
@@ -15,30 +15,30 @@ class StreamRequest implements RequestInterface
     public const HTTP_BATCH_SIZE_IN_BYTES = 1048576;
 
     private Client $client;
-    private StorageInterface $storage;
+    private StorageInterface $storageService;
 
-    public function __construct(Client $client, StorageInterface $storage)
+    public function __construct(Client $client, StorageInterface $storageService)
     {
         $this->client = $client;
-        $this->storage = $storage;
+        $this->storageService = $storageService;
     }
 
-    public function canRequest(ProviderInterface $provider): bool
+    public function canRequest(ProviderDto $providerDto): bool
     {
-        return $provider->getRequestType() === RequestEnum::STREAM;
+        return $providerDto->getHttpType() === HttpTypeEnum::STREAM;
     }
 
-    public function request(ProviderInterface $provider)
+    public function request(ProviderDto $providerDto)
     {
-        $response = $this->makeRequest($provider);
+        $response = $this->makeRequest($providerDto);
         $filePath = $this->saveResponseInFile($response->getBody());
 
-        $provider->setResponse($filePath);
+        $providerDto->setResponseBody($filePath);
     }
 
-    private function makeRequest(ProviderInterface $provider): ResponseInterface
+    private function makeRequest(ProviderDto $providerDto): ResponseInterface
     {
-        return $this->client->request('GET', $provider->getEndpoint(), [
+        return $this->client->request('GET', $providerDto->getEndpoint(), [
             'stream' => true,
             'headers' => [
                 'Accept' => 'application/json',
@@ -52,7 +52,7 @@ class StreamRequest implements RequestInterface
 
         while (!$body->eof()) {
             $line = $body->read(self::HTTP_BATCH_SIZE_IN_BYTES);
-            $this->storage->pointerAppendBinary($filePath, $line);
+            $this->storageService->pointerAppendBinary($filePath, $line);
         }
 
         return $filePath;
@@ -65,6 +65,6 @@ class StreamRequest implements RequestInterface
 
     private function generateFilePath(): string
     {
-        return $this->storage->path($this->generateFileName());
+        return $this->storageService->path($this->generateFileName());
     }
 }

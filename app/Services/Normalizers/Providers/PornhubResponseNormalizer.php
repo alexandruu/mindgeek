@@ -2,14 +2,14 @@
 
 namespace App\Services\Normalizers\Providers;
 
+use App\Dtos\ProviderDto;
 use App\Interfaces\NormalizerInterface;
-use App\Services\Actors\Providers\PornhubActorsImport;
 
 class PornhubResponseNormalizer implements NormalizerInterface
 {
-    public function supportsNormalization($provider): bool
+    public function supportsNormalization(ProviderDto $providerDto): bool
     {
-        return $provider instanceof PornhubActorsImport;
+        return $providerDto->getNormalizerType() === get_class($this);
     }
 
     public function normalize($line): array|bool

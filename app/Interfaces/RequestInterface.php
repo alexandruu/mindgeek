@@ -2,9 +2,11 @@
 
 namespace App\Interfaces;
 
+use App\Dtos\ProviderDto;
+
 interface RequestInterface
 {
-    public function request(ProviderInterface $provider);
+    public function request(ProviderDto $providerDto);
 
-    public function canRequest(ProviderInterface $provider): bool;
+    public function canRequest(ProviderDto $providerDto): bool;
 }

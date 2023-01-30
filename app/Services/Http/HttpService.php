@@ -2,16 +2,12 @@
 
 namespace App\Services\Http;
 
-use App\Enums\CategoryEnum;
+use App\Dtos\ProviderDto;
 use App\Exceptions\HttpServiceException;
-use App\Exceptions\NoStrategyFoundException;
-use App\Interfaces\ProviderInterface;
 use Exception;
 
 class HttpService
 {
-    private $providers = [];
-    private $processedProviders = 0;
     private RequestService $requestService;
     private ResponseService $responseService;
 
@@ -23,56 +19,22 @@ class HttpService
         $this->responseService = $responseService;
     }
 
-    public function import(CategoryEnum $category)
+    public function import(ProviderDto $providerDto)
     {
-        foreach ($this->providers as $provider) {
-            if ($provider->hasCategory($category)) {
-                $this->incrementCounterForProcessedProviders();
-                    
-                try {
-                    $this->requestService->request($provider);
-                    $this->responseService->import($provider);
-                } catch (Exception $e) {
-                    $this->throwHttpServiceException($e, $provider, $category);
-                }
-            }
-        }
-
-        $this->checkHowManyStrategiesWereAppliedForCategory($category);
-    }
-
-    private function checkHowManyStrategiesWereAppliedForCategory($category)
-    {
-        if ($this->processedProviders === 0) {
-            $this->throwNoStrategyFoundException($category);
+        try {
+            $this->requestService->request($providerDto);
+            return $this->responseService->import($providerDto);
+        } catch (Exception $e) {
+            $this->throwHttpServiceException($e, $providerDto);
         }
     }
 
-    private function incrementCounterForProcessedProviders()
-    {
-        $this->processedProviders++;
-    }
-
-    private function throwHttpServiceException($e, $provider, $category)
+    private function throwHttpServiceException($e, ProviderDto $providerDto)
     {
         throw new HttpServiceException(sprintf(
-            'Provider "%s" for category "%s" encountered an error: %s',
-            get_class($provider),
-            $category->name,
+            'Provider "%s" encountered an error: %s',
+            $providerDto->getEndpoint(),
             $e->getMessage()
         ));
-    }
-
-    private function throwNoStrategyFoundException($category)
-    {
-        throw new NoStrategyFoundException(sprintf(
-            'No providers found for category "%s".',
-            $category->name
-        ));
-    }
-
-    public function registerProvider(ProviderInterface $provider)
-    {
-        $this->providers[] = $provider;
     }
 }

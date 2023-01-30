@@ -19,7 +19,6 @@ class HttpProvider extends ServiceProvider
     {
         $this->app->singleton(HttpService::class, function ($app) {
             $service = new HttpService($app->make(RequestService::class), $app->make(ResponseService::class));
-            $service->registerProvider($app->make(PornhubActorsImport::class));
             return $service;
         });
     }

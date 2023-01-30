@@ -2,17 +2,17 @@
 
 namespace App\Services\Normalizers;
 
+use App\Dtos\ProviderDto;
 use App\Interfaces\NormalizerInterface;
-use App\Interfaces\ProviderInterface;
 
 class NormalizeResponseService
 {
     private array $normalizers;
 
-    public function normalize(ProviderInterface $provider, $content)
+    public function normalize(ProviderDto $providerDto, $content)
     {
         foreach ($this->normalizers as $normalizer) {
-            if ($normalizer->supportsNormalization($provider)) {
+            if ($normalizer->supportsNormalization($providerDto)) {
                 return $normalizer->normalize($content);
             }
         }

@@ -2,7 +2,8 @@
 
 namespace App\Enums;
 
-enum RequestEnum
+enum HttpTypeEnum
 {
     case STREAM;
+    case SIMPLE;
 }

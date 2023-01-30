@@ -1,15 +1,11 @@
 <?php
 
-namespace App\Services\Savers\Providers;
+namespace App\Services\Actors;
 
-use App\Enums\CategoryEnum;
-use App\Interfaces\ProviderInterface;
-use App\Interfaces\SaverInterface;
-use App\Repositories\ActorRepository;
-use Illuminate\Support\Facades\Cache;
+use App\Interfaces\CacheInterface;
 use Illuminate\Support\Facades\DB;
 
-class ActorsSaver implements SaverInterface
+class ActorsSavedInChuncksService
 {
     public const CHUNCK_SIZE_FOR_PERSIST = 100;
 
@@ -23,22 +19,12 @@ class ActorsSaver implements SaverInterface
         $this->flush();
     }
 
-    public function supportSaver(ProviderInterface $provider): bool
-    {
-        return $provider->getCategory() === CategoryEnum::ACTORS;
-    }
-
     public function save($information)
     {
         $actor = $this->saveActor($information);
         $this->saveThumbnails($actor, $information['thumbnails']);
         $this->updateCounter();
         $this->flushChunck();
-    }
-
-    public function clearCache()
-    {
-        Cache::forget(ActorRepository::keyForGetActorsPaginates());
     }
 
     private function saveActor($information)
@@ -57,7 +43,7 @@ class ActorsSaver implements SaverInterface
 
     private function saveThumbnails($actor, $thumbnails): void
     {
-        foreach ($thumbnails as $key => $thumbnail_) {
+        foreach ($thumbnails as $thumbnail_) {
             $thumbnail = [
                 'id' => $this->generateThumbnailId($actor, $thumbnail_),
                 'actor_id' => $actor['id'],

@@ -2,17 +2,18 @@
 
 namespace App\Services\Http;
 
+use App\Dtos\ProviderDto;
 use App\Interfaces\ResponseInterface;
 
 class ResponseService
 {
     private array $responses;
 
-    public function import($provider)
+    public function import(ProviderDto $providerDto)
     {
         foreach ($this->responses as $response) {
-            if ($response->canImport($provider)) {
-                $response->import($provider);
+            if ($response->canImport($providerDto)) {
+                return $response->import($providerDto);
             }
         }
     }

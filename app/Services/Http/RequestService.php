@@ -2,18 +2,18 @@
 
 namespace App\Services\Http;
 
-use App\Interfaces\ProviderInterface;
+use App\Dtos\ProviderDto;
 use App\Interfaces\RequestInterface;
 
 class RequestService
 {
     private array $requests;
 
-    public function request(ProviderInterface $provider)
+    public function request(ProviderDto $providerDto)
     {
         foreach ($this->requests as $request) {
-            if ($request->canRequest($provider)) {
-                $request->request($provider);
+            if ($request->canRequest($providerDto)) {
+                $request->request($providerDto);
             }
         }
     }

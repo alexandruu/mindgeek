@@ -5,10 +5,10 @@ namespace App\Services\Cache;
 use App\Exceptions\FileAlreadyExistCacheException;
 use App\Exceptions\FileIsNotAccessibleCacheException;
 use App\Exceptions\FileNotFoundCacheException;
+use App\Factories\HttpSimpleFactory;
 use App\Interfaces\CacheInterface;
 use App\Interfaces\StorageInterface;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Throwable;
 
 class CacheService implements CacheInterface
@@ -27,7 +27,7 @@ class CacheService implements CacheInterface
         if (!Cache::has($fileName)) {
             try {
                 Cache::rememberForever($fileName, function () use ($url) {
-                    return base64_encode(Http::get($url)->body());
+                    return base64_encode(HttpSimpleFactory::import(['endpoint' => $url]));
                 });
             } catch (Throwable $e) {
                 throw new FileIsNotAccessibleCacheException();
@@ -46,6 +46,16 @@ class CacheService implements CacheInterface
         }
 
         throw new FileNotFoundCacheException();
+    }
+
+    public function forget($key)
+    {
+        Cache::forget($key);
+    }
+
+    public function flush()
+    {
+        Cache::flush();
     }
 
     protected function generateFileName($prefixFileName = null, $filePath)

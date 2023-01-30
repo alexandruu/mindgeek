@@ -24,4 +24,9 @@ class ActorService
         $actor = $this->actorRepository->getById(($id));
         return $actor;
     }
+
+    public function save(array $actor)
+    {
+        
+    }
 }

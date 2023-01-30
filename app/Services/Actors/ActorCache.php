@@ -8,7 +8,6 @@ use App\Interfaces\CacheInterface;
 use App\Models\Actor;
 use App\Models\Url;
 use App\Repositories\ActorRepository;
-use Illuminate\Support\Facades\Cache;
 
 class ActorCache
 {
@@ -28,7 +27,7 @@ class ActorCache
                 try {
                     if ($url->url_cache === null) {
                         $this->updateUrlCache($url);
-                        $this->clearCacheFor($actor);
+                        $this->clearCache($actor);
                     }
                 } catch (FileIsNotAccessibleCacheException | FileAlreadyExistCacheException $e) {
                 }
@@ -44,8 +43,9 @@ class ActorCache
         $url->save();
     }
 
-    private function clearCacheFor(Actor $actor): void
+    private function clearCache(Actor $actor): void
     {
-        Cache::forget(ActorRepository::keyForGetById($actor->id));
+        $this->cacheService->forget(ActorRepository::keyForGetActorsPaginates());
+        $this->cacheService->forget(ActorRepository::keyForGetById($actor->id));
     }
 }

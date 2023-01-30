@@ -2,9 +2,11 @@
 
 namespace App\Interfaces;
 
+use App\Dtos\ProviderDto;
+
 interface ResponseInterface
 {
-    public function canImport(ProviderInterface $provider): bool;
+    public function canImport(ProviderDto $ProviderDto): bool;
 
-    public function import(ProviderInterface $provider);
+    public function import(ProviderDto $ProviderDto);
 }
