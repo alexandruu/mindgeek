@@ -2,7 +2,6 @@
 
 namespace App\Services\Actors;
 
-use App\Interfaces\CacheInterface;
 use Illuminate\Support\Facades\DB;
 
 class ActorsSavedInChuncksService
