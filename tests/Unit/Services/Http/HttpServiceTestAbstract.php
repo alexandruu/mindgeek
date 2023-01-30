@@ -11,7 +11,7 @@ use Generator;
 use Tests\TestCase;
 
 
-abstract class HttpStreamTestAbstract extends TestCase
+abstract class HttpServiceTestAbstract extends TestCase
 {
     protected RequestService $requestService;
     protected ResponseService $responseService;
@@ -34,7 +34,7 @@ abstract class HttpStreamTestAbstract extends TestCase
         $this->setExpectationsForHttpStreamInteractionWithSuccess();
     }
 
-    protected function prepareProviderForHttpStreamInteractionWithSuccess(): void
+    private function prepareProviderForHttpStreamInteractionWithSuccess(): void
     {
         $this->providerDto = new ProviderDto();
         $this->providerDto->setEndpoint('endpoint')
@@ -43,12 +43,12 @@ abstract class HttpStreamTestAbstract extends TestCase
             ->setLimitOfImportedItems(100);
     }
 
-    protected function makeHttpStreamInteractionWithSuccess(): void
+    protected function makeHttpStreamInteraction(): void
     {
         $this->result = $this->service->import($this->providerDto);
     }
 
-    protected function setExpectationsForHttpStreamInteractionWithSuccess(): void
+    private function setExpectationsForHttpStreamInteractionWithSuccess(): void
     {
         $this->requestService->shouldReceive('request')
             ->once();
@@ -73,5 +73,33 @@ abstract class HttpStreamTestAbstract extends TestCase
         foreach ($array as $item) {
             yield $item;
         }
+    }
+
+    protected function prepareSceneForHttpSimpleInteractionWithSuccess(): void
+    {
+        $this->prepareProviderForHttpSimpleInteractionWithSuccess();
+        $this->setExpectationsForHttpSimpleInteractionWithSuccess();
+    }
+
+    private function prepareProviderForHttpSimpleInteractionWithSuccess(): void
+    {
+        $this->providerDto = new ProviderDto();
+        $this->providerDto->setEndpoint('endpoint')
+            ->setHttpType(HttpTypeEnum::SIMPLE);
+    }
+
+    private function setExpectationsForHttpSimpleInteractionWithSuccess(): void
+    {
+        $this->requestService->shouldReceive('request')
+            ->once();
+
+        $this->responseService->shouldReceive('import')
+            ->once()
+            ->andReturn('content body');
+    }
+
+    protected function checkIfHttpSimpleInteractionIsOk()
+    {
+        $this->assertEquals('content body', $this->result);
     }
 }
