@@ -4,16 +4,17 @@ namespace Tests\Unit\Services\Http;
 
 class HttpServiceTest extends HttpServiceTestAbstract
 {
-    public function testEntireHttpStreamInteractionWithSuccess()
+    public function testAHttpStreamInteractionWithSuccess()
     {
-        $this->prepareSceneForHttpStreamInteractionWithSuccess();
+        $this->expectHttpStreamInteractionWithSuccess();
         $this->makeHttpStreamInteraction();
         $this->checkIfHttpStreamInteractionIsOk();
     }
 
-    public function testEntireHttpSimpleInteractionWithSuccess()
+    public function testAHttpSimpleInteractionWithSuccess()
     {
-        $this->prepareSceneForHttpSimpleInteractionWithSuccess();
+        $this->expectHttpSimpleInteractionWithSuccess();
         $this->makeHttpStreamInteraction();
+        $this->checkIfHttpSimpleInteractionIsOk();
     }
 }

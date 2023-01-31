@@ -28,7 +28,7 @@ abstract class HttpServiceTestAbstract extends TestCase
         $this->service = new HttpService($this->requestService, $this->responseService);
     }
 
-    protected function prepareSceneForHttpStreamInteractionWithSuccess(): void
+    protected function expectHttpStreamInteractionWithSuccess(): void
     {
         $this->prepareProviderForHttpStreamInteractionWithSuccess();
         $this->setExpectationsForHttpStreamInteractionWithSuccess();
@@ -75,7 +75,7 @@ abstract class HttpServiceTestAbstract extends TestCase
         }
     }
 
-    protected function prepareSceneForHttpSimpleInteractionWithSuccess(): void
+    protected function expectHttpSimpleInteractionWithSuccess(): void
     {
         $this->prepareProviderForHttpSimpleInteractionWithSuccess();
         $this->setExpectationsForHttpSimpleInteractionWithSuccess();

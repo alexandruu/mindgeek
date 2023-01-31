@@ -26,7 +26,7 @@ abstract class CacheServiceTestAbstract extends TestCase
         $this->service = $this->getMockOfFileCache(['generateFileName']);
     }
 
-    protected function setExpectationsForCacheAndServiceToSaveAFileInCacheWithSuccess()
+    protected function expectToSaveAFileInCacheWithSuccess()
     {
         $this->service->shouldReceive('generateFileName')
             ->once()
@@ -45,13 +45,10 @@ abstract class CacheServiceTestAbstract extends TestCase
         $this->service->saveFileInCache(null, "test.jpg");
     }
 
-    protected function setExceptionExpectation()
+    protected function expectFileIsNotAccessibleCacheException()
     {
         $this->expectException(FileIsNotAccessibleCacheException::class);
-    }
 
-    protected function prepareFileCacheToThrowExceptionWhenTringToSaveFileInCache()
-    {
         $this->service->shouldReceive('generateFileName')
             ->once();
 
@@ -64,7 +61,7 @@ abstract class CacheServiceTestAbstract extends TestCase
             ->andThrow(new \Exception());
     }
 
-    protected function setExpectationsForCacheToGetFileContentFromCacheWithSuccess()
+    protected function expectToGetFileContentFromCacheWithSuccess()
     {
         Cache::shouldReceive('has')
             ->once()

@@ -21,7 +21,7 @@ abstract class ActorsSavedInChuncksServiceTestAbstract extends TestCase
          $this->cacheService = \Mockery::mock(CacheService::class);
     }
 
-     protected function setExpectationForDatabaseAndCache(): void
+     protected function expectCacheToBeClearedAndRemainingDataToBeSaved(): void
      {
          DB::shouldReceive('table')
              ->andReturn($this->db);

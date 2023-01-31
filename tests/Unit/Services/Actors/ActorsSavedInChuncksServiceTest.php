@@ -4,9 +4,8 @@ namespace Tests\Unit\Services\Actors;
 
 class ActorsSavedInChuncksServiceTest extends ActorsSavedInChuncksServiceTestAbstract
 {
-
-    public function testEnsureThatDestructMethodMakesAFlushInDatabaseAndMakesAClearCache()
+    public function testWhatHappensOnDestructionOfTheObject()
     {
-        $this->setExpectationForDatabaseAndCache();
+        $this->expectCacheToBeClearedAndRemainingDataToBeSaved();
     }
 }
