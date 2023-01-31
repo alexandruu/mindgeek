@@ -4,9 +4,9 @@ namespace Tests\Unit\Services\Actors;
 
 use App\Services\Actors\ActorsSavedInChuncksService;
 use App\Services\Cache\CacheService;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
-use Illuminate\Database\Query\Builder;
 
 abstract class ActorsSavedInChuncksServiceTestAbstract extends TestCase
 {
@@ -17,15 +17,15 @@ abstract class ActorsSavedInChuncksServiceTestAbstract extends TestCase
     {
          parent::setUp();
 
-         $this->db = \Mockery::mock(Builder::class);
-         $this->cacheService = \Mockery::mock(CacheService::class);
+        $this->queryBuilder = \Mockery::mock(Builder::class);
+        $this->cacheService = \Mockery::mock(CacheService::class);
     }
 
      protected function expectCacheToBeClearedAndRemainingDataToBeSaved(): void
      {
          DB::shouldReceive('table')
-             ->andReturn($this->db);
-         $this->db->shouldReceive('insert')
+             ->andReturn($this->queryBuilder);
+         $this->queryBuilder->shouldReceive('insert')
              ->times(3);
          $this->cacheService->shouldReceive('flush')
              ->once();
