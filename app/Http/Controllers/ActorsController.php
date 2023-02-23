@@ -34,7 +34,7 @@ class ActorsController extends Controller
 
         try {
             $actors = HttpStreamFactory::import([
-                'endpoint' => 'https://www.pornhub.com/files/json_feed_pornstars.json',
+                'endpoint' => env('ENDPOINT_ACTOR_PROVIDER_1'),
                 'normalizer' => PornhubResponseNormalizer::class,
                 'limit' => 15000
             ]);
